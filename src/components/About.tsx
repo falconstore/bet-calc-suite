@@ -1,5 +1,5 @@
 import { Card } from "./ui/card";
-import { Target, Zap, Gift, TrendingUp, CheckCircle, BookOpen, Image, Link, Video, HeadphonesIcon } from "lucide-react";
+import { Target, Zap, Gift, TrendingUp, CheckCircle, BookOpen, Image, Link, Video, HeadphonesIcon, Fish, ListChecks, Calculator, Sparkles } from "lucide-react";
 
 const features = [
   {
@@ -101,9 +101,14 @@ export const About = () => {
 
         {/* O que é o Shark Green */}
         <Card className="glass-card p-8 md:p-12 mb-12">
-          <h3 className="text-3xl font-black mb-6 text-center">
-            🦈 O que é o Shark 100% Green?
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Fish className="w-6 h-6" />
+            </div>
+            <h3 className="text-3xl font-black text-center">
+              O que é o Shark 100% Green?
+            </h3>
+          </div>
           <p className="text-lg text-center mb-8 max-w-3xl mx-auto">
             É o grupo que te mostra, de forma <strong>100% mastigada</strong>, como lucrar com apostas esportivas 
             e promoções de casas de aposta — mesmo sem entender nada!
@@ -133,9 +138,14 @@ export const About = () => {
 
         {/* O que oferecemos */}
         <div className="mb-12">
-          <h3 className="text-3xl font-black mb-8 text-center">
-            📚 O que a gente te dá:
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="p-2 rounded-lg gradient-glow">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <h3 className="text-3xl font-black text-center">
+              O que a gente te dá:
+            </h3>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {offerings.map((offering, index) => {
               const Icon = offering.icon;
@@ -162,9 +172,14 @@ export const About = () => {
 
         {/* Requisitos */}
         <Card className="glass-card p-8 md:p-12 mb-12">
-          <h3 className="text-3xl font-black mb-8 text-center">
-            ✅ Você só precisa de 3 coisas:
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="p-2 rounded-lg gradient-glow">
+              <ListChecks className="w-6 h-6" />
+            </div>
+            <h3 className="text-3xl font-black text-center">
+              Você só precisa de 3 coisas:
+            </h3>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {requirements.map((req, index) => (
               <div
@@ -184,9 +199,14 @@ export const About = () => {
 
         {/* Calculadoras */}
         <div className="mb-12">
-          <h3 className="text-3xl font-black mb-8 text-center">
-            🧮 Nossas Calculadoras
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Calculator className="w-6 h-6" />
+            </div>
+            <h3 className="text-3xl font-black text-center">
+              Nossas Calculadoras
+            </h3>
+          </div>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="glass-card p-8 glow-hover">
               <h4 className="text-2xl font-bold mb-4 text-gradient">ArbiPro</h4>
@@ -242,9 +262,14 @@ export const About = () => {
 
         {/* CTA */}
         <Card className="glass-card p-8 md:p-12 text-center">
-          <h3 className="text-2xl md:text-3xl font-black mb-4">
-            💥 Se você seguir o que a gente ensina, o lucro vem. Ponto final.
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black">
+              Se você seguir o que a gente ensina, o lucro vem. Ponto final.
+            </h3>
+          </div>
           <p className="text-lg text-muted-foreground mb-6">
             Comece agora mesmo com nossas calculadoras profissionais
           </p>

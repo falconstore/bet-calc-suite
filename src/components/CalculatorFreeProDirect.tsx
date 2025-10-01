@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { Link, Trash2 } from "lucide-react";
 
 interface FreebetEntry {
   odd: string;
@@ -792,14 +793,16 @@ export const CalculatorFreeProDirect = () => {
           className="btn btn-primary flex items-center gap-2"
           style={{ minWidth: '180px' }}
         >
-          🔗 Compartilhar
+          <Link className="w-4 h-4" />
+          Compartilhar
         </button>
         <button
           onClick={handleClear}
           className="btn btn-secondary flex items-center gap-2"
           style={{ minWidth: '180px' }}
         >
-          🗑️ Limpar Dados
+          <Trash2 className="w-4 h-4" />
+          Limpar Dados
         </button>
       </div>
 

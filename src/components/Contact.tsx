@@ -1,6 +1,6 @@
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Mail, MessageSquare, DollarSign, HelpCircle, Instagram, Youtube } from "lucide-react";
+import { Mail, MessageSquare, DollarSign, HelpCircle, Instagram, Youtube, Phone, Star, CheckCircle, Wrench, Clock, Target, BookOpen, CreditCard, RefreshCw, BarChart, Rocket } from "lucide-react";
 
 export const Contact = () => {
   return (
@@ -8,9 +8,14 @@ export const Contact = () => {
       <div className="container mx-auto max-w-6xl">
         {/* Hero */}
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-black mb-4">
-            📞 Entre em <span className="text-gradient">Contato</span>
-          </h2>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Phone className="w-6 h-6" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black">
+              Entre em <span className="text-gradient">Contato</span>
+            </h2>
+          </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             O único grupo VIP do Brasil que realmente entrega lucro consistente em arbitragem de bônus. 
             Suporte personalizado e resultados comprovados.
@@ -19,9 +24,14 @@ export const Contact = () => {
 
         {/* Canais Principais */}
         <div className="mb-12">
-          <h3 className="text-3xl font-black mb-8 text-center">
-            🌟 Canais Principais
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Star className="w-6 h-6" />
+            </div>
+            <h3 className="text-3xl font-black text-center">
+              Canais Principais
+            </h3>
+          </div>
           <div className="grid md:grid-cols-3 gap-6">
             {/* Telegram Group */}
             <Card className="glass-card p-6 glow-hover">
@@ -35,15 +45,15 @@ export const Contact = () => {
                 </p>
                 <div className="space-y-1 mb-6 text-sm">
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Estratégias gratuitas</span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Comunidade ativa</span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Suporte da equipe</span>
                   </div>
                 </div>
@@ -70,15 +80,15 @@ export const Contact = () => {
                 </p>
                 <div className="space-y-1 mb-6 text-sm">
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Conteúdo visual</span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Stories diárias</span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Dicas rápidas</span>
                   </div>
                 </div>
@@ -105,15 +115,15 @@ export const Contact = () => {
                 </p>
                 <div className="space-y-1 mb-6 text-sm">
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Vídeos tutoriais</span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Estratégias visuais</span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <span className="text-primary">✅</span>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     <span>Lives exclusivas</span>
                   </div>
                 </div>
@@ -132,9 +142,14 @@ export const Contact = () => {
 
         {/* Suporte Especializado */}
         <div className="mb-12">
-          <h3 className="text-3xl font-black mb-8 text-center">
-            🛠️ Suporte Especializado
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Wrench className="w-6 h-6" />
+            </div>
+            <h3 className="text-3xl font-black text-center">
+              Suporte Especializado
+            </h3>
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Suporte Procedimentos */}
             <Card className="glass-card p-8 glow-hover">
@@ -151,15 +166,15 @@ export const Contact = () => {
               </div>
               <div className="space-y-2 mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">⏱️</span>
+                  <Clock className="w-4 h-4 text-primary" />
                   <span className="text-sm">Resposta em até 5 minutos</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">🎯</span>
+                  <Target className="w-4 h-4 text-primary" />
                   <span className="text-sm">Especialistas em arbitragem</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">📚</span>
+                  <BookOpen className="w-4 h-4 text-primary" />
                   <span className="text-sm">Atendimento personalizado</span>
                 </div>
               </div>
@@ -188,15 +203,15 @@ export const Contact = () => {
               </div>
               <div className="space-y-2 mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">💳</span>
+                  <CreditCard className="w-4 h-4 text-primary" />
                   <span className="text-sm">Pagamentos</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">🔄</span>
+                  <RefreshCw className="w-4 h-4 text-primary" />
                   <span className="text-sm">Renovações e upgrades</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">📊</span>
+                  <BarChart className="w-4 h-4 text-primary" />
                   <span className="text-sm">Planos e preços</span>
                 </div>
               </div>
@@ -236,9 +251,14 @@ export const Contact = () => {
 
         {/* CTA Final */}
         <Card className="glass-card p-8 md:p-12 text-center">
-          <h3 className="text-2xl md:text-3xl font-black mb-4">
-            🚀 Pronto para começar?
-          </h3>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-2 rounded-lg gradient-glow">
+              <Rocket className="w-6 h-6" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black">
+              Pronto para começar?
+            </h3>
+          </div>
           <p className="text-lg text-muted-foreground">
             Acesse nossas calculadoras profissionais agora mesmo
           </p>

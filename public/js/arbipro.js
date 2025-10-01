@@ -208,8 +208,8 @@ export class ArbiPro {
 
     app.innerHTML = `
       <div class="calc-header">
-        <h1 style="font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; text-align: center;">Calculadora ArbiPro</h1>
-        <p style="color: var(--text-secondary); font-size: 0.875rem; text-align: center;">Calcule stakes otimizados para garantir lucro em qualquer resultado, usando freebet ou nao</p>
+        <h1 style="font-size: 2.25rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; text-align: center;">Calculadora ArbiPro</h1>
+        <p style="color: var(--text-secondary); font-size: 1.125rem; text-align: center;">Calcule stakes otimizados para garantir lucro em qualquer resultado, usando freebet ou nao</p>
       </div>
 
       <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">

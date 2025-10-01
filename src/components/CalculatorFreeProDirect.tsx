@@ -173,12 +173,16 @@ export const CalculatorFreeProDirect = () => {
     setTotalStake(total);
     setRoi(roiCalc);
     
+    const hasLay = validEntries.some(e => e.isLay);
+    
     const resultsData = [
       {
         name: "1 vence (Casa Promo)",
         odd: o1.toFixed(2),
         commission: (Number.isFinite(c1) ? c1 : 0).toFixed(2),
         stake: formatBRL(s1),
+        deficit: '-',
+        liability: hasLay ? '-' : undefined,
         profit: formatBRL(profits[0])
       },
       ...validEntries.map((entry, idx) => ({
@@ -186,6 +190,8 @@ export const CalculatorFreeProDirect = () => {
         odd: oddsOrig[idx].toFixed(2),
         commission: (Number.isFinite(toNum(entry.commission)) ? toNum(entry.commission) : 0).toFixed(2),
         stake: formatBRL(roundedStakes[idx]) + (entry.isLay ? ' (LAY)' : ''),
+        deficit: formatBRL(defs[idx]),
+        liability: hasLay ? (entry.isLay ? formatBRL(liabilities[idx]) : '-') : undefined,
         profit: formatBRL(profits[idx + 1])
       }))
     ];
@@ -333,12 +339,16 @@ export const CalculatorFreeProDirect = () => {
     setTotalStake(total);
     setRoi(roiCalc);
     
+    const hasLay = validEntries.some(e => e.isLay);
+    
     const resultsData = [
       {
         name: "1 vence (Ganhou)",
         odd: odd.toFixed(2),
         commission: (Number.isFinite(mainComm) ? mainComm : 0).toFixed(2),
         stake: formatBRL(stake),
+        deficit: '-',
+        liability: hasLay ? '-' : undefined,
         profit: formatBRL(profits[0])
       },
       ...validEntries.map((entry, idx) => ({
@@ -346,6 +356,8 @@ export const CalculatorFreeProDirect = () => {
         odd: toNum(entry.odd).toFixed(2),
         commission: (Number.isFinite(toNum(entry.commission)) ? toNum(entry.commission) : 0).toFixed(2),
         stake: formatBRL(stakes[idx]) + (entry.isLay ? ' (LAY)' : ''),
+        deficit: formatBRL(defs[idx]),
+        liability: hasLay ? (entry.isLay ? formatBRL(liabilities[idx]) : '-') : undefined,
         profit: formatBRL(profits[idx + 1])
       }))
     ];
@@ -803,6 +815,8 @@ export const CalculatorFreeProDirect = () => {
                   <th>Odd</th>
                   <th>Comissão</th>
                   <th>Stake</th>
+                  <th>Déficit</th>
+                  {results[0]?.liability !== undefined && <th>Responsabilidade</th>}
                   <th>Lucro</th>
                 </tr>
               </thead>
@@ -813,6 +827,12 @@ export const CalculatorFreeProDirect = () => {
                     <td>{result.odd}</td>
                     <td>{result.commission}%</td>
                     <td>{result.stake}</td>
+                    <td className={parseFlex(result.deficit) >= 0 ? 'profit-positive' : 'profit-negative'}>
+                      {result.deficit}
+                    </td>
+                    {result.liability !== undefined && (
+                      <td>{result.liability}</td>
+                    )}
                     <td className={parseFlex(result.profit) >= 0 ? 'profit-positive' : 'profit-negative'}>
                       {result.profit}
                     </td>

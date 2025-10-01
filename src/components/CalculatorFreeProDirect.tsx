@@ -177,7 +177,7 @@ export const CalculatorFreeProDirect = () => {
       {
         name: "1 vence (Casa Promo)",
         odd: o1.toFixed(2),
-        commission: c1.toFixed(2),
+        commission: (Number.isFinite(c1) ? c1 : 0).toFixed(2),
         stake: formatBRL(s1),
         profit: formatBRL(profits[0])
       },
@@ -280,7 +280,15 @@ export const CalculatorFreeProDirect = () => {
       const numer = N + S_total - C;
       
       validEntries.forEach((entry, idx) => {
-        stakes.push(numer / eBack[idx]);
+        if (entry.isLay) {
+          // Para lay no modo nivelado, calculamos a liability desejada
+          const desiredLiability = numer / eBack[idx];
+          // A stake do lay é liability / (odd - 1)
+          const L = oddsOrig[idx];
+          stakes.push(desiredLiability / (L - 1));
+        } else {
+          stakes.push(numer / eBack[idx]);
+        }
       });
     }
 
@@ -329,7 +337,7 @@ export const CalculatorFreeProDirect = () => {
       {
         name: "1 vence (Ganhou)",
         odd: odd.toFixed(2),
-        commission: mainComm.toFixed(2),
+        commission: (Number.isFinite(mainComm) ? mainComm : 0).toFixed(2),
         stake: formatBRL(stake),
         profit: formatBRL(profits[0])
       },

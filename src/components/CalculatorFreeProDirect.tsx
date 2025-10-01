@@ -319,16 +319,18 @@ export const CalculatorFreeProDirect = () => {
     // Lucro se ganhar aposta principal
     const net1 = stake * Oeff - total;
 
-    // Lucros nas coberturas (com cashback se perder) - exatamente como no original
+    // Lucros nas coberturas - seguindo exatamente o código original
     const defs: number[] = [];
     const profits: number[] = [net1];
     for (let win = 0; win < stakes.length; win++) {
       let deficit;
       if (validEntries[win].isLay) {
+        // Cálculo lay exatamente como no original
         const ganhoLay = stakes[win] * (1 - commFrac[win]);
         const liab = liabilities[win];
         deficit = ganhoLay - (total - liab);
       } else {
+        // Cálculo back exatamente como no original
         deficit = stakes[win] * eBack[win] - total;
       }
       defs.push(deficit);

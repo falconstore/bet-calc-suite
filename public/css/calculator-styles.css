@@ -1,0 +1,256 @@
+/* Estilos para as calculadoras JavaScript */
+/* Usa o design system definido em src/index.css */
+
+#panel-1, #panel-2, #casas-content {
+  color: hsl(var(--foreground));
+  font-family: inherit;
+}
+
+/* Inputs das calculadoras */
+#panel-1 input[type="text"],
+#panel-1 input[type="number"],
+#panel-2 input[type="text"],
+#panel-2 input[type="number"],
+#casas-content input[type="text"],
+#casas-content input[type="search"] {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+#panel-1 input:focus,
+#panel-2 input:focus,
+#casas-content input:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+
+/* Botões das calculadoras */
+#panel-1 button,
+#panel-2 button,
+#casas-content button {
+  background: linear-gradient(135deg, hsl(var(--shark-gradient-start)), hsl(var(--shark-gradient-end)));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+#panel-1 button:hover,
+#panel-2 button:hover,
+#casas-content button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.5);
+}
+
+#panel-1 button:active,
+#panel-2 button:active,
+#casas-content button:active {
+  transform: translateY(0);
+}
+
+/* Labels */
+#panel-1 label,
+#panel-2 label,
+#casas-content label {
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+/* Checkboxes */
+#panel-1 input[type="checkbox"],
+#panel-2 input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: hsl(var(--primary));
+}
+
+/* Select dropdowns */
+#panel-1 select,
+#panel-2 select,
+#casas-content select {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#panel-1 select:focus,
+#panel-2 select:focus,
+#casas-content select:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+
+/* Resultado/Cards */
+#panel-1 .result-card,
+#panel-2 .result-card {
+  background: rgba(31, 41, 59, 0.5);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+/* Badges/Tags */
+#panel-1 .badge,
+#panel-2 .badge,
+#casas-content .badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+#panel-1 .badge.success,
+#casas-content .badge.success {
+  background: hsl(var(--success) / 0.2);
+  color: hsl(var(--success));
+  border-color: hsl(var(--success) / 0.5);
+}
+
+#panel-1 .badge.warning,
+#casas-content .badge.warning {
+  background: hsl(var(--warning) / 0.2);
+  color: hsl(var(--warning));
+  border-color: hsl(var(--warning) / 0.5);
+}
+
+/* Tabelas */
+#casas-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+#casas-content thead {
+  background: hsl(var(--muted));
+  border-bottom: 2px solid hsl(var(--border));
+}
+
+#casas-content th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+}
+
+#casas-content td {
+  padding: 0.75rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.3);
+  font-size: 0.875rem;
+}
+
+#casas-content tbody tr:hover {
+  background: hsl(var(--muted) / 0.5);
+  transition: background 0.2s;
+}
+
+/* Efeito glow nos resultados positivos */
+#panel-1 .profit-positive,
+#panel-2 .profit-positive {
+  color: hsl(var(--success));
+  font-weight: 700;
+  text-shadow: 0 0 10px hsl(var(--success) / 0.5);
+}
+
+#panel-1 .profit-negative,
+#panel-2 .profit-negative {
+  color: hsl(var(--destructive));
+  font-weight: 700;
+}
+
+/* Grid layouts */
+#panel-1 .house-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  #panel-1 .house-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  #panel-1 .house-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Cards de casa */
+#panel-1 .house-card {
+  background: rgba(31, 41, 59, 0.5);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+#panel-1 .house-card:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+  transform: translateY(-2px);
+}
+
+/* Animações suaves */
+#panel-1 *,
+#panel-2 *,
+#casas-content * {
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+/* Scrollbar personalizado */
+#panel-1 ::-webkit-scrollbar,
+#panel-2 ::-webkit-scrollbar,
+#casas-content ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#panel-1 ::-webkit-scrollbar-track,
+#panel-2 ::-webkit-scrollbar-track,
+#casas-content ::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+#panel-1 ::-webkit-scrollbar-thumb,
+#panel-2 ::-webkit-scrollbar-thumb,
+#casas-content ::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 4px;
+}
+
+#panel-1 ::-webkit-scrollbar-thumb:hover,
+#panel-2 ::-webkit-scrollbar-thumb:hover,
+#casas-content ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
+}

@@ -861,11 +861,23 @@ export const CalculatorFreeProDirect = () => {
                     {result.liability !== undefined && (
                       <td>{result.liability}</td>
                     )}
-                    <td className={parseFlex(result.deficit) >= 0 ? 'profit-positive' : 'profit-negative'}>
-                      {result.deficit}
+                    <td 
+                      className={parseFlex(result.deficit) >= 0 ? 'profit-positive' : 'profit-negative'}
+                      style={{ 
+                        color: parseFlex(result.deficit) >= 0 ? 'hsl(160, 85%, 50%)' : 'hsl(0, 85%, 60%)',
+                        fontWeight: 700 
+                      }}
+                    >
+                      <strong>{result.deficit}</strong>
                     </td>
-                    <td className={parseFlex(result.profit) >= 0 ? 'profit-positive' : 'profit-negative'}>
-                      {result.profit}
+                    <td 
+                      className={parseFlex(result.profit) >= 0 ? 'profit-positive' : 'profit-negative'}
+                      style={{ 
+                        color: parseFlex(result.profit) >= 0 ? 'hsl(160, 85%, 50%)' : 'hsl(0, 85%, 60%)',
+                        fontWeight: 700 
+                      }}
+                    >
+                      <strong>{result.profit}</strong>
                     </td>
                   </tr>
                 ))}

@@ -303,6 +303,17 @@
   border: 2px solid hsl(var(--border));
 }
 
+/* Estilos para todas as tabelas de resultados */
+.results-table .profit-positive {
+  color: hsl(var(--success)) !important;
+  font-weight: 700 !important;
+}
+
+.results-table .profit-negative {
+  color: hsl(var(--destructive)) !important;
+  font-weight: 700 !important;
+}
+
 #casas-content thead {
   background: linear-gradient(135deg, hsl(var(--shark-gradient-start)), hsl(var(--shark-gradient-end)));
 }

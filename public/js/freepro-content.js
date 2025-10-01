@@ -8,29 +8,29 @@ export function getFreeProfHTML() {
   <title>Calculadora FreePro</title>
   <style>
     :root {
-      --primary: #3b82f6;
+      --primary: #00d4ff;
       --secondary: #22c55e;
-      --accent: #8b5cf6;
+      --accent: #00d4ff;
       --warning: #f59e0b;
       --danger: #dc2626;
       --success: #22c55e;
-      --bg-primary: #111827;
-      --bg-secondary: #1f2937;
-      --bg-card: #374151;
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #1a1f35;
+      --bg-card: #1e293b;
       --text-primary: #f9fafb;
-      --text-secondary: #d1d5db;
-      --text-muted: #9ca3af;
-      --border: #4b5563;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border: #334155;
     }
 
     [data-theme="light"] {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #f1f5f9;
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #e2e8f0;
       --bg-card: #ffffff;
-      --text-primary: #1e293b;
+      --text-primary: #0f172a;
       --text-secondary: #475569;
       --text-muted: #64748b;
-      --border: #e2e8f0;
+      --border: #cbd5e1;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,7 +55,7 @@ export function getFreeProfHTML() {
     .calc-title {
       font-size: 1.75rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #00d4ff, #22c55e);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
@@ -81,12 +81,12 @@ export function getFreeProfHTML() {
     }
 
     .card-promo {
-      border-left: 3px solid var(--primary);
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(31, 41, 59, 0.8));
+      border-left: 3px solid #00d4ff;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(31, 41, 59, 0.8));
     }
 
     [data-theme="light"] .card-promo {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(255, 255, 255, 0.9));
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 255, 255, 0.9));
     }
 
     .card-header {
@@ -110,12 +110,12 @@ export function getFreeProfHTML() {
       font-size: 0.625rem;
       font-weight: 600;
       text-transform: uppercase;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #00d4ff, #22c55e);
       color: white;
     }
 
     .badge-auto {
-      background: linear-gradient(135deg, var(--success), var(--accent));
+      background: linear-gradient(135deg, #22c55e, #00d4ff);
       animation: pulse 2s infinite;
     }
 
@@ -162,9 +162,9 @@ export function getFreeProfHTML() {
     }
 
     .toggle-option.active {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #00d4ff, #22c55e);
       color: white;
-      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
     }
 
     .form-grid {
@@ -207,8 +207,8 @@ export function getFreeProfHTML() {
 
     .form-control:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      border-color: #00d4ff;
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
     }
 
     .coverage-grid {
@@ -222,7 +222,7 @@ export function getFreeProfHTML() {
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1rem;
-      border-left: 3px solid var(--primary);
+      border-left: 3px solid #00d4ff;
       transition: background 0.3s ease;
     }
 
@@ -230,11 +230,11 @@ export function getFreeProfHTML() {
       background: rgba(255, 255, 255, 0.8);
     }
 
-    .coverage-card:nth-child(1) { border-left-color: var(--success); }
-    .coverage-card:nth-child(2) { border-left-color: var(--warning); }
-    .coverage-card:nth-child(3) { border-left-color: var(--danger); }
-    .coverage-card:nth-child(4) { border-left-color: var(--primary); }
-    .coverage-card:nth-child(5) { border-left-color: var(--accent); }
+    .coverage-card:nth-child(1) { border-left-color: #22c55e; }
+    .coverage-card:nth-child(2) { border-left-color: #f59e0b; }
+    .coverage-card:nth-child(3) { border-left-color: #dc2626; }
+    .coverage-card:nth-child(4) { border-left-color: #00d4ff; }
+    .coverage-card:nth-child(5) { border-left-color: #22c55e; }
 
     .coverage-title {
       font-weight: 700;
@@ -268,15 +268,15 @@ export function getFreeProfHTML() {
     }
 
     .checkbox-wrapper:hover {
-      border-color: var(--primary);
-      background: rgba(59, 130, 246, 0.05);
+      border-color: #00d4ff;
+      background: rgba(0, 212, 255, 0.08);
     }
 
     .total-display {
       text-align: center;
       padding: 1.5rem;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 197, 94, 0.05));
-      border: 2px solid var(--primary);
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(34, 197, 94, 0.08));
+      border: 2px solid #00d4ff;
       border-radius: 12px;
       margin: 1rem 0;
     }
@@ -284,7 +284,7 @@ export function getFreeProfHTML() {
     .total-value {
       font-size: 1.75rem;
       font-weight: 800;
-      color: var(--primary);
+      color: #00d4ff;
       font-family: ui-monospace, monospace;
     }
 
@@ -318,14 +318,14 @@ export function getFreeProfHTML() {
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #00d4ff, #22c55e);
       color: white;
-      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
     }
 
     .btn-secondary {
@@ -337,7 +337,7 @@ export function getFreeProfHTML() {
 
     .btn-secondary:hover {
       background: rgba(55, 65, 81, 1);
-      border-color: var(--primary);
+      border-color: #00d4ff;
       transform: translateY(-1px);
     }
 
@@ -348,7 +348,7 @@ export function getFreeProfHTML() {
 
     [data-theme="light"] .btn-secondary:hover {
       background: rgba(255, 255, 255, 1);
-      border-color: var(--primary);
+      border-color: #00d4ff;
     }
 
     .alert {
@@ -387,7 +387,7 @@ export function getFreeProfHTML() {
       padding: 0.75rem 0.5rem;
       font-size: 0.75rem;
       letter-spacing: 0.05em;
-      border-bottom: 2px solid var(--primary);
+      border-bottom: 2px solid #00d4ff;
       transition: background 0.3s ease;
     }
 
@@ -410,7 +410,7 @@ export function getFreeProfHTML() {
 
     .profit-positive { color: #22c55e !important; font-weight: 700 !important; }
     .profit-negative { color: #dc2626 !important; font-weight: 700 !important; }
-    .profit-highlight { color: #3b82f6 !important; font-weight: 800 !important; }
+    .profit-highlight { color: #00d4ff !important; font-weight: 800 !important; }
     .text-small { font-size: 0.75rem; color: var(--text-muted); }
 
     .freebet-only { display: block; }

@@ -230,10 +230,10 @@ export class ArbiPro {
           <div class="stat-label">Arredondamento</div>
           <div class="form-group" style="margin: 0.75rem 0 0 0;">
             <select id="rounding" class="form-select" style="font-size: 0.75rem; padding: 0.5rem;">
-              <option value="0.01">R$ 0,01</option>
-              <option value="0.10">R$ 0,10</option>
-              <option value="0.50">R$ 0,50</option>
-              <option value="1.00">R$ 1,00</option>
+              <option value="0.01" ${this.displayRounding==="0.01"?'selected':''}>R$ 0,01</option>
+              <option value="0.10" ${this.displayRounding==="0.10"?'selected':''}>R$ 0,10</option>
+              <option value="0.50" ${this.displayRounding==="0.50"?'selected':''}>R$ 0,50</option>
+              <option value="1.00" ${this.displayRounding==="1.00"?'selected':''}>R$ 1,00</option>
             </select>
           </div>
         </div>
@@ -395,7 +395,8 @@ export class ArbiPro {
     if (roundingSelect) {
       roundingSelect.addEventListener("change", (e) => {
         this.displayRounding = e.target.value;
-        this.roundingValue = parseFloat(this.displayRounding.replace(',', '.'));
+        this.roundingValue = parseFloat(e.target.value);
+        console.log('Arredondamento alterado para:', this.roundingValue);
         this.scheduleUpdate();
       });
     }

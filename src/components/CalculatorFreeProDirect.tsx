@@ -589,13 +589,17 @@ export const CalculatorFreeProDirect = () => {
           <div className="stat-label">Arredondamento</div>
           <select
             value={rounding}
-            onChange={(e) => setRounding(parseFloat(e.target.value))}
+            onChange={(e) => {
+              const newRounding = parseFloat(e.target.value);
+              console.log('Arredondamento alterado para:', newRounding);
+              setRounding(newRounding);
+            }}
             className="form-select mt-3 w-full"
           >
-            <option value="0.01">R$ 0,01</option>
-            <option value="0.10">R$ 0,10</option>
-            <option value="0.50">R$ 0,50</option>
-            <option value="1.00">R$ 1,00</option>
+            <option value={0.01}>R$ 0,01</option>
+            <option value={0.10}>R$ 0,10</option>
+            <option value={0.50}>R$ 0,50</option>
+            <option value={1.00}>R$ 1,00</option>
           </select>
         </div>
 

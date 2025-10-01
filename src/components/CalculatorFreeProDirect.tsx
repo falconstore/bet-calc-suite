@@ -354,17 +354,53 @@ export const CalculatorFreeProDirect = () => {
     try {
       await navigator.clipboard.writeText(url);
       toast({
-        title: "Link copiado!",
-        description: "O link da calculadora foi copiado para a área de transferência.",
+        title: "✅ Link copiado!",
+        description: "Compartilhe com outros usuários.",
       });
     } catch (error) {
       toast({
-        title: "Link gerado",
-        description: "Copie o link da barra de endereços do navegador.",
-        variant: "destructive",
+        title: "✅ Link gerado",
+        description: "Copie o endereço da barra do navegador.",
       });
       window.history.pushState({}, '', url);
     }
+  };
+
+  // Limpar todos os dados
+  const handleClear = () => {
+    // Limpar URL
+    window.history.pushState({}, '', window.location.pathname + window.location.hash);
+    
+    // Reset modo e configurações
+    setMode('freebet');
+    setNumEntries(3);
+    setRounding(1.00);
+    
+    // Reset campos Freebet
+    setHouseOdd("");
+    setHouseCommission("");
+    setQualifyingStake("");
+    setFreebetValue("");
+    setExtractionRate("70");
+    
+    // Reset campos Cashback
+    setCashbackOdd("");
+    setCashbackCommission("");
+    setCashbackStake("");
+    setCashbackRate("");
+    
+    // Reset entries
+    setEntries(Array(5).fill(null).map(() => ({ odd: "", commission: "", isLay: false })));
+    
+    // Reset resultados
+    setResults([]);
+    setTotalStake(0);
+    setRoi(0);
+    
+    toast({
+      title: "✅ Dados limpos",
+      description: "Todos os campos foram limpos com sucesso.",
+    });
   };
 
   // Carregar estado da URL ao montar
@@ -618,15 +654,21 @@ export const CalculatorFreeProDirect = () => {
         </div>
       </div>
 
-      {/* Botão Compartilhar */}
-      <div className="flex justify-center mb-6">
+      {/* Botões Ação */}
+      <div className="flex justify-center gap-4 mb-6" style={{ flexWrap: 'wrap' }}>
         <button
           onClick={handleShare}
           className="btn btn-primary flex items-center gap-2"
-          style={{ minWidth: '200px' }}
+          style={{ minWidth: '180px' }}
         >
-          <Share2 className="w-4 h-4" />
-          Compartilhar Calculadora
+          🔗 Compartilhar
+        </button>
+        <button
+          onClick={handleClear}
+          className="btn btn-secondary flex items-center gap-2"
+          style={{ minWidth: '180px' }}
+        >
+          🗑️ Limpar Dados
         </button>
       </div>
 

@@ -694,6 +694,7 @@ export class ArbiPro {
       }
 
       this.renderHouses();
+      this.scheduleUpdate(); // Recalcular após carregar da URL
       console.log('✅ Dados carregados da URL');
     } catch (error) {
       console.error('Erro ao carregar dados da URL:', error);

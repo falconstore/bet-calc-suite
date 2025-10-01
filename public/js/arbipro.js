@@ -212,7 +212,7 @@ export class ArbiPro {
         <p style="color: var(--text-secondary); font-size: 0.875rem; text-align: center;">Calcule stakes otimizados para garantir lucro em qualquer resultado</p>
       </div>
 
-      <div class="stats-grid">
+      <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
         <div class="stat-card">
           <div class="stat-label">Configurações</div>
           <div class="form-group" style="margin: 0.75rem 0 0 0;">
@@ -237,16 +237,6 @@ export class ArbiPro {
             </select>
           </div>
         </div>
-
-        <div class="stat-card">
-          <div class="stat-value" id="totalStake">R$ 0,00</div>
-          <div class="stat-label">Total Investido</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-value profit-highlight" id="roi">0,00%</div>
-          <div class="stat-label">ROI Médio</div>
-        </div>
       </div>
 
       <div class="card">
@@ -256,6 +246,19 @@ export class ArbiPro {
 
       <div class="card" style="margin-top: 1.5rem;">
         <div class="section-title">Resultados Shark ArbiPro</div>
+        
+        <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div class="stat-card">
+            <div class="stat-value" id="totalStake">R$ 0,00</div>
+            <div class="stat-label">Total Investido</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value profit-highlight" id="roi">0,00%</div>
+            <div class="stat-label">ROI Médio</div>
+          </div>
+        </div>
+        
         <div style="overflow-x: auto;">
           <table class="results-table">
             <thead>

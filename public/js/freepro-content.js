@@ -541,18 +541,6 @@ export function getFreeProfHTML() {
     <div id="oddsContainer" class="coverage-grid"></div>
   </div>
 
-  <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
-    <div class="total-display">
-      <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.375rem; text-transform: uppercase;">Stake Total</div>
-      <div class="total-value" id="k_S">—</div>
-    </div>
-    
-    <div class="total-display">
-      <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.375rem; text-transform: uppercase;">Total Investido (ROI)</div>
-      <div class="total-value profit-highlight" id="roi_display">—</div>
-    </div>
-  </div>
-
   <div class="actions">
     <button class="btn btn-primary" id="shareBtn">
       🔗 Compartilhar
@@ -568,6 +556,19 @@ export function getFreeProfHTML() {
     <div class="card-header">
       <div class="card-title">Resultados Shark FreePro</div>
     </div>
+    
+    <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+      <div class="total-display">
+        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.375rem; text-transform: uppercase;">Stake Total</div>
+        <div class="total-value" id="k_S">—</div>
+      </div>
+      
+      <div class="total-display">
+        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.375rem; text-transform: uppercase;">Total Investido (ROI)</div>
+        <div class="total-value profit-highlight" id="roi_display">—</div>
+      </div>
+    </div>
+    
     <div style="overflow-x:auto">
       <table class="results-table">
         <thead></thead>

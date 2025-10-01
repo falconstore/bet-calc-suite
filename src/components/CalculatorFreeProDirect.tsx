@@ -138,12 +138,12 @@ export const CalculatorFreeProDirect = () => {
     const roundStep = (v: number) => Math.round(v / rounding) * rounding;
     const roundedStakes = stakes.map(roundStep).map(s => Math.max(s, 0.50));
 
-    // Liabilities e Total Stake calculados juntos como no original
+    // Liabilities - exatamente como no original
     const liabilities = roundedStakes.map((stake, idx) => {
       return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
     });
 
-    // Total usando reduce como no original para garantir consistência
+    // Total - exatamente como no original
     const total = s1 + roundedStakes.reduce((acc, stake, idx) => {
       return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : stake);
     }, 0);
@@ -151,7 +151,8 @@ export const CalculatorFreeProDirect = () => {
     // Lucro cenário 1 (casa promo vence)
     const net1 = s1 * o1e - total;
 
-    // Lucros nos outros cenários - seguindo exatamente a lógica original
+    // Lucros nos outros cenários - exatamente como no original
+    const defs: number[] = [];
     const profits: number[] = [net1];
     for (let win = 0; win < roundedStakes.length; win++) {
       let deficit;
@@ -162,6 +163,7 @@ export const CalculatorFreeProDirect = () => {
       } else {
         deficit = roundedStakes[win] * eBack[win] - total;
       }
+      defs.push(deficit);
       profits.push(deficit + rF);
     }
 
@@ -229,6 +231,7 @@ export const CalculatorFreeProDirect = () => {
     const Oeff = effOdd(odd, mainComm);
     const commFrac: number[] = [];
     const eBack: number[] = [];
+    const oddsOrig: number[] = [];
     let stakes: number[] = [];
 
     const onlyBack = !validEntries.some(e => e.isLay);
@@ -239,6 +242,7 @@ export const CalculatorFreeProDirect = () => {
         const L = toNum(entry.odd);
         const comm = toNum(entry.commission);
         commFrac.push((Number.isFinite(comm) && comm > 0) ? comm / 100 : 0);
+        oddsOrig.push(L);
         eBack.push(effOdd(L, comm));
       });
 
@@ -277,6 +281,7 @@ export const CalculatorFreeProDirect = () => {
         const comm = toNum(entry.commission);
         const cfrac = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
         commFrac.push(cfrac);
+        oddsOrig.push(L);
 
         if (entry.isLay) {
           stakes.push(baseLossLay / (1 - cfrac));
@@ -301,22 +306,21 @@ export const CalculatorFreeProDirect = () => {
     const roundStep = (v: number) => Math.round(v / rounding) * rounding;
     stakes = stakes.map(roundStep).map(v => Math.max(v, 0.50));
 
-    // Liabilities
+    // Liabilities - exatamente como no original
     const liabilities = stakes.map((s, idx) => {
-      const L = toNum(validEntries[idx].odd);
-      return validEntries[idx].isLay ? (L - 1) * s : 0;
+      return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * s : 0;
     });
 
-    // Total usando reduce como no original
+    // Total - exatamente como no original (usando oddsOrig)
     const total = stake + stakes.reduce((acc, s, idx) => {
-      const L = toNum(validEntries[idx].odd);
-      return acc + (validEntries[idx].isLay ? (L - 1) * s : s);
+      return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * s : s);
     }, 0);
 
     // Lucro se ganhar aposta principal
     const net1 = stake * Oeff - total;
 
-    // Lucros nas coberturas (com cashback se perder) - seguindo lógica original
+    // Lucros nas coberturas (com cashback se perder) - exatamente como no original
+    const defs: number[] = [];
     const profits: number[] = [net1];
     for (let win = 0; win < stakes.length; win++) {
       let deficit;
@@ -327,6 +331,7 @@ export const CalculatorFreeProDirect = () => {
       } else {
         deficit = stakes[win] * eBack[win] - total;
       }
+      defs.push(deficit);
       profits.push(deficit + cashbackAmount);
     }
 

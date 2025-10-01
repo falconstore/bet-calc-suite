@@ -1,7 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
-import { CalculatorArbiProWrapper } from "@/components/CalculatorArbiProWrapper";
-import { CalculatorFreeProWrapper } from "@/components/CalculatorFreeProWrapper";
+import { CalculatorTabs } from "@/components/CalculatorTabs";
 import { CasasRegulamentadasWrapper } from "@/components/CasasRegulamentadasWrapper";
 import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
@@ -12,11 +11,8 @@ const Index = () => {
       <Navigation />
       <Hero />
       
-      {/* Calculadora ArbiPro */}
-      <CalculatorArbiProWrapper />
-
-      {/* Calculadora FreePro */}
-      <CalculatorFreeProWrapper />
+      {/* Calculadoras em Abas */}
+      <CalculatorTabs />
 
       {/* Casas Regulamentadas */}
       <CasasRegulamentadasWrapper />

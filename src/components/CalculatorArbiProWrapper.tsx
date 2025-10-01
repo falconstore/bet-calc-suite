@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { Card } from "./ui/card";
 
 declare global {
   interface Window {
@@ -44,23 +43,10 @@ export const CalculatorArbiProWrapper = () => {
   }, []);
 
   return (
-    <section id="arbipro" className="py-20 px-4">
-      <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-black mb-4">
-            Calculadora <span className="text-gradient">ArbiPro</span>
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            Arbitragem profissional com suporte a Lay, Freebet e Comissão
-          </p>
-        </div>
-
-        <Card className="glass-card p-6 md:p-8">
-          <div id="panel-1">
-            <div id="app" ref={containerRef}></div>
-          </div>
-        </Card>
+    <div className="w-full">
+      <div id="panel-1" className="w-full">
+        <div id="app" ref={containerRef} className="calculator-container"></div>
       </div>
-    </section>
+    </div>
   );
 };

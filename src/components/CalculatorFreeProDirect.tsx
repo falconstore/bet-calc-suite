@@ -555,7 +555,7 @@ export const CalculatorFreeProDirect = () => {
           <span className="text-gradient">Calculadora FreePro</span>
         </h1>
         <p className="text-lg text-muted-foreground">
-          Otimize seus lucros com freebets e cashbacks profissionais
+          Otimize seus lucros com freebets de apostas seguras e cashbacks - cálculo automático em tempo real
         </p>
       </div>
 

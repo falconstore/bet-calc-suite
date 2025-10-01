@@ -234,24 +234,33 @@ export const CalculatorFreeProDirect = () => {
     const oddsOrig: number[] = [];
     let stakes: number[] = [];
 
-    const onlyBack = !validEntries.some(e => e.isLay);
+    // Calcular eBack para todas as entradas (incluindo lay)
+    validEntries.forEach((entry) => {
+      const L = toNum(entry.odd);
+      const comm = toNum(entry.commission);
+      const cfrac = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
+      commFrac.push(cfrac);
+      oddsOrig.push(L);
 
-    if (onlyBack) {
-      // Modo só back
-      validEntries.forEach((entry) => {
-        const L = toNum(entry.odd);
-        const comm = toNum(entry.commission);
-        commFrac.push((Number.isFinite(comm) && comm > 0) ? comm / 100 : 0);
-        oddsOrig.push(L);
+      if (entry.isLay) {
+        // Para lay, calcular odd efetiva equivalente
+        const denom = L - 1;
+        eBack.push(1 + (1 - cfrac) / denom);
+      } else {
         eBack.push(effOdd(L, comm));
-      });
+      }
+    });
 
-      const H = eBack.reduce((a, e) => a + (1 / e), 0);
+    // Calcular H para verificar se é possível nivelar
+    const H = eBack.reduce((a, e) => a + (1 / e), 0);
 
-      if (H >= 1) {
-        // Modo de cobertura
-        const baseLoss = stake;
-        validEntries.forEach((entry, idx) => {
+    if (H >= 1) {
+      // Modo de cobertura (não consegue nivelar)
+      const baseLoss = stake;
+      validEntries.forEach((entry, idx) => {
+        if (entry.isLay) {
+          stakes.push(baseLoss / (1 - commFrac[idx]));
+        } else {
           const util = eBack[idx] - 1;
           if (util <= 0) {
             setResults([]);
@@ -260,47 +269,18 @@ export const CalculatorFreeProDirect = () => {
             return;
           }
           stakes.push(baseLoss / util);
-        });
-      } else {
-        // Modo nivelado
-        const P = stake;
-        const C = cashbackAmount;
-        const N = -P * (1 - Oeff + H * Oeff) + H * C;
-        const S_total = P * Oeff - N;
-        const numer = N + S_total - C;
-        
-        validEntries.forEach((entry, idx) => {
-          stakes.push(numer / eBack[idx]);
-        });
-      }
-    } else {
-      // Modo com lay - exatamente como no original linha 917-932
-      const baseLossLay = stake;
-      validEntries.forEach((entry, idx) => {
-        const L = toNum(entry.odd);
-        const comm = toNum(entry.commission);
-        const cfrac = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
-        commFrac.push(cfrac);
-        oddsOrig.push(L);
-
-        if (entry.isLay) {
-          // Linha 921-923 do original
-          stakes.push(baseLossLay / (1 - cfrac));
-          const denom = L - 1;
-          eBack.push(1 + (1 - cfrac) / denom);
-        } else {
-          // Linha 925-929 do original
-          const e3 = effOdd(L, comm);
-          eBack.push(e3);
-          const util3 = e3 - 1;
-          if (!(util3 > 0)) {
-            setResults([]);
-            setTotalStake(0);
-            setRoi(0);
-            return;
-          }
-          stakes.push(baseLossLay / util3);
         }
+      });
+    } else {
+      // Modo nivelado (equilibra os lucros)
+      const P = stake;
+      const C = cashbackAmount;
+      const N = -P * (1 - Oeff + H * Oeff) + H * C;
+      const S_total = P * Oeff - N;
+      const numer = N + S_total - C;
+      
+      validEntries.forEach((entry, idx) => {
+        stakes.push(numer / eBack[idx]);
       });
     }
 

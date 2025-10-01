@@ -25,3 +25,6 @@ export const Utils = {
     });
   }
 };
+
+// Expor globalmente
+window.Utils = Utils;

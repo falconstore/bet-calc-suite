@@ -588,3 +588,6 @@ export class CasasRegulamentadas {
     URL.revokeObjectURL(url);
   }
 }
+
+// Expor globalmente
+window.CasasRegulamentadas = CasasRegulamentadas;

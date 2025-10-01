@@ -1,6 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Card } from "./ui/card";
 
+declare global {
+  interface Window {
+    ArbiPro?: any;
+  }
+}
+
 export const CalculatorArbiProWrapper = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
@@ -8,27 +14,33 @@ export const CalculatorArbiProWrapper = () => {
   useEffect(() => {
     if (initializedRef.current) return;
     
-    const loadCalculator = async () => {
-      try {
-        // Carregar dependências na ordem correta
-        // @ts-ignore - vanilla JS modules
-        await import('/js/app-config.js');
-        // @ts-ignore - vanilla JS modules
-        await import('/js/helpers.js');
-        // @ts-ignore - vanilla JS modules
-        const arbiProModule = await import('/js/arbipro.js');
-        
-        if (containerRef.current && arbiProModule.ArbiPro) {
-          const calculator = new arbiProModule.ArbiPro();
+    const initCalculator = () => {
+      if (window.ArbiPro && containerRef.current) {
+        try {
+          const calculator = new window.ArbiPro();
           calculator.init();
           initializedRef.current = true;
+        } catch (error) {
+          console.error('Erro ao inicializar ArbiPro:', error);
         }
-      } catch (error) {
-        console.error('Erro ao carregar calculadora ArbiPro:', error);
       }
     };
 
-    loadCalculator();
+    // Tentar inicializar imediatamente
+    if (window.ArbiPro) {
+      initCalculator();
+    } else {
+      // Aguardar o script carregar
+      const checkInterval = setInterval(() => {
+        if (window.ArbiPro) {
+          initCalculator();
+          clearInterval(checkInterval);
+        }
+      }, 100);
+
+      // Timeout de segurança
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    }
   }, []);
 
   return (

@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Card } from "./ui/card";
 
+declare global {
+  interface Window {
+    FreePro?: any;
+    getFreeProfHTML?: () => string;
+  }
+}
+
 export const CalculatorFreeProWrapper = () => {
   const containerRef = useRef<HTMLIFrameElement>(null);
   const initializedRef = useRef(false);
@@ -8,24 +15,42 @@ export const CalculatorFreeProWrapper = () => {
   useEffect(() => {
     if (initializedRef.current) return;
     
-    const loadCalculator = async () => {
-      try {
-        // @ts-ignore - vanilla JS modules
-        await import('/js/freepro-content.js');
-        // @ts-ignore - vanilla JS modules
-        const freeProModule = await import('/js/freepro.js');
-        
-        if (containerRef.current && freeProModule.FreePro) {
-          const calculator = new freeProModule.FreePro();
-          calculator.init();
-          initializedRef.current = true;
+    const initCalculator = () => {
+      if (window.FreePro && window.getFreeProfHTML && containerRef.current) {
+        try {
+          const iframe = containerRef.current;
+          const htmlContent = window.getFreeProfHTML();
+          
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (iframeDoc) {
+            iframeDoc.open();
+            iframeDoc.write(htmlContent);
+            iframeDoc.close();
+            
+            iframe.dataset.loaded = "1";
+            initializedRef.current = true;
+          }
+        } catch (error) {
+          console.error('Erro ao inicializar FreePro:', error);
         }
-      } catch (error) {
-        console.error('Erro ao carregar calculadora FreePro:', error);
       }
     };
 
-    loadCalculator();
+    // Tentar inicializar imediatamente
+    if (window.FreePro && window.getFreeProfHTML) {
+      initCalculator();
+    } else {
+      // Aguardar o script carregar
+      const checkInterval = setInterval(() => {
+        if (window.FreePro && window.getFreeProfHTML) {
+          initCalculator();
+          clearInterval(checkInterval);
+        }
+      }, 100);
+
+      // Timeout de segurança
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    }
   }, []);
 
   return (

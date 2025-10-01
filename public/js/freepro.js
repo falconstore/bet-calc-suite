@@ -131,3 +131,6 @@ export class FreePro {
     });
   }
 }
+
+// Expor globalmente
+window.FreePro = FreePro;

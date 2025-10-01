@@ -3,6 +3,12 @@ import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { CheckCircle2 } from "lucide-react";
 
+declare global {
+  interface Window {
+    CasasRegulamentadas?: any;
+  }
+}
+
 export const CasasRegulamentadasWrapper = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
@@ -10,23 +16,34 @@ export const CasasRegulamentadasWrapper = () => {
   useEffect(() => {
     if (initializedRef.current) return;
     
-    const loadCasas = async () => {
-      try {
-        // @ts-ignore - vanilla JS modules
-        const casasModule = await import('/js/casas-regulamentadas.js');
-        
-        if (containerRef.current && casasModule.CasasRegulamentadas) {
-          const casas = new casasModule.CasasRegulamentadas();
+    const initCasas = () => {
+      if (window.CasasRegulamentadas && containerRef.current) {
+        try {
+          const casas = new window.CasasRegulamentadas();
           casas.init();
           casas.onPageActivated();
           initializedRef.current = true;
+        } catch (error) {
+          console.error('Erro ao inicializar Casas Regulamentadas:', error);
         }
-      } catch (error) {
-        console.error('Erro ao carregar casas regulamentadas:', error);
       }
     };
 
-    loadCasas();
+    // Tentar inicializar imediatamente
+    if (window.CasasRegulamentadas) {
+      initCasas();
+    } else {
+      // Aguardar o script carregar
+      const checkInterval = setInterval(() => {
+        if (window.CasasRegulamentadas) {
+          initCasas();
+          clearInterval(checkInterval);
+        }
+      }, 100);
+
+      // Timeout de segurança
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    }
   }, []);
 
   return (

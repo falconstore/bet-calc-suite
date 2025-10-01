@@ -1,8 +1,9 @@
 // assets/js/calculators/arbipro.js - VERSÃO COMPLETA ATUALIZADA
 // Calculadora de Arbitragem completa
 
-import { Utils } from '../utils/helpers.js';
-import { APP_CONFIG } from '../config/app.js';
+// Usa variáveis globais window.Utils e window.APP_CONFIG
+const Utils = window.Utils;
+const APP_CONFIG = window.APP_CONFIG;
 
 export class ArbiPro {
   constructor() {
@@ -660,3 +661,6 @@ export class ArbiPro {
     console.log('✅ Dados limpos com sucesso');
   }
 }
+
+// Expor globalmente
+window.ArbiPro = ArbiPro;

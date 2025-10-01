@@ -1068,3 +1068,6 @@ export function getFreeProfHTML() {
 </body>
 </html>`;
 }
+
+// Expor globalmente
+window.getFreeProfHTML = getFreeProfHTML;

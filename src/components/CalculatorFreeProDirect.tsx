@@ -42,6 +42,17 @@ export const CalculatorFreeProDirect = () => {
     return isNaN(num) ? 0 : num;
   };
 
+  const toNum = (val: string): number => {
+    if (val === undefined || val === null) return NaN;
+    const str = String(val).trim();
+    if (!str) return NaN;
+    if (str.indexOf(',') !== -1 && str.indexOf('.') !== -1) {
+      return parseFloat(str.replace(/\.|\,/g, (match) => match === ',' ? '.' : ''));
+    }
+    if (str.indexOf(',') !== -1) return parseFloat(str.replace(',', '.'));
+    return parseFloat(str);
+  };
+
   const formatBRL = (val: number): string => {
     return val.toLocaleString('pt-BR', {
       style: 'currency',
@@ -52,13 +63,17 @@ export const CalculatorFreeProDirect = () => {
   };
 
   const calculateFreebet = () => {
-    const o1 = parseFlex(houseOdd);
-    const c1 = parseFlex(houseCommission);
-    const s1 = parseFlex(qualifyingStake);
-    const F = parseFlex(freebetValue);
-    const r = parseFlex(extractionRate);
+    const o1 = toNum(houseOdd);
+    const c1 = toNum(houseCommission);
+    const s1 = toNum(qualifyingStake);
+    const F = toNum(freebetValue);
+    const r = toNum(extractionRate);
 
-    if (o1 <= 1 || F <= 0 || r <= 0 || r > 100 || s1 <= 0) {
+    // Validação igual ao original - c1 pode ser NaN (vazio)
+    if (!Number.isFinite(o1) || o1 <= 1 ||
+        !Number.isFinite(F) || F < 0 ||
+        !Number.isFinite(r) || r < 0 || r > 100 ||
+        !Number.isFinite(s1) || s1 <= 0) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
@@ -66,19 +81,22 @@ export const CalculatorFreeProDirect = () => {
     }
 
     const activeEntries = entries.slice(0, numEntries - 1);
-    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 1);
+    const validEntries = activeEntries.filter(e => {
+      const oddVal = toNum(e.odd);
+      return Number.isFinite(oddVal) && oddVal > 1;
+    });
     
-    if (validEntries.length === 0) {
+    if (validEntries.length !== numEntries - 1) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
       return;
     }
 
-    // Cálculo Freebet com lógica correta
+    // Função effOdd igual ao original
     const effOdd = (odd: number, comm: number) => {
-      const commFrac = comm > 0 ? comm / 100 : 0;
-      return 1 + (odd - 1) * (1 - commFrac);
+      const cc = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
+      return 1 + (odd - 1) * (1 - cc);
     };
 
     const o1e = effOdd(o1, c1);
@@ -88,17 +106,18 @@ export const CalculatorFreeProDirect = () => {
     const stakes: number[] = [];
     const eBack: number[] = [];
     const commFrac: number[] = [];
-    const liabilities: number[] = [];
+    const oddsOrig: number[] = [];
 
-    validEntries.forEach((entry, idx) => {
-      const L = parseFlex(entry.odd);
-      const comm = parseFlex(entry.commission);
-      const cfrac = comm > 0 ? comm / 100 : 0;
+    validEntries.forEach((entry) => {
+      const L = toNum(entry.odd);
+      const comm = toNum(entry.commission);
+      const cfrac = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
       commFrac.push(cfrac);
+      oddsOrig.push(L);
 
       if (entry.isLay) {
         const denom = L - 1;
-        if (denom <= 0) {
+        if (!(denom > 0)) {
           setResults([]);
           setTotalStake(0);
           setRoi(0);
@@ -115,16 +134,13 @@ export const CalculatorFreeProDirect = () => {
       }
     });
 
-    // Arredondamento
-    const roundedStakes = stakes.map(s => {
-      const rounded = Math.round(s / rounding) * rounding;
-      return Math.max(rounded, 0.50);
-    });
+    // Arredondamento igual ao original
+    const roundStep = (v: number) => Math.round(v / rounding) * rounding;
+    const roundedStakes = stakes.map(roundStep).map(s => Math.max(s, 0.50));
 
-    // Liabilities para lay bets
-    validEntries.forEach((entry, idx) => {
-      const L = parseFlex(entry.odd);
-      liabilities.push(entry.isLay ? (L - 1) * roundedStakes[idx] : 0);
+    // Liabilities
+    const liabilities = roundedStakes.map((stake, idx) => {
+      return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
     });
 
     // Total Stake
@@ -166,8 +182,8 @@ export const CalculatorFreeProDirect = () => {
       },
       ...validEntries.map((entry, idx) => ({
         name: `${idx + 2} vence`,
-        odd: parseFlex(entry.odd).toFixed(2),
-        commission: parseFlex(entry.commission).toFixed(2),
+        odd: oddsOrig[idx].toFixed(2),
+        commission: (Number.isFinite(toNum(entry.commission)) ? toNum(entry.commission) : 0).toFixed(2),
         stake: formatBRL(roundedStakes[idx]) + (entry.isLay ? ' (LAY)' : ''),
         profit: formatBRL(profits[idx + 1])
       }))
@@ -177,12 +193,14 @@ export const CalculatorFreeProDirect = () => {
   };
 
   const calculateCashback = () => {
-    const odd = parseFlex(cashbackOdd);
-    const stake = parseFlex(cashbackStake);
-    const cbRate = parseFlex(cashbackRate);
-    const mainComm = parseFlex(cashbackCommission);
+    const odd = toNum(cashbackOdd);
+    const stake = toNum(cashbackStake);
+    const cbRate = toNum(cashbackRate);
+    const mainComm = toNum(cashbackCommission);
 
-    if (odd <= 1 || stake <= 0 || cbRate < 0 || cbRate > 100) {
+    if (!Number.isFinite(odd) || odd <= 1 ||
+        !Number.isFinite(stake) || stake <= 0 ||
+        !Number.isFinite(cbRate) || cbRate < 0 || cbRate > 100) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
@@ -190,9 +208,12 @@ export const CalculatorFreeProDirect = () => {
     }
 
     const activeEntries = entries.slice(0, numEntries - 1);
-    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 1);
+    const validEntries = activeEntries.filter(e => {
+      const oddVal = toNum(e.odd);
+      return Number.isFinite(oddVal) && oddVal > 1;
+    });
     
-    if (validEntries.length === 0) {
+    if (validEntries.length !== numEntries - 1) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
@@ -202,24 +223,23 @@ export const CalculatorFreeProDirect = () => {
     const cashbackAmount = stake * (cbRate / 100);
 
     const effOdd = (o: number, comm: number) => {
-      const commFrac = comm > 0 ? comm / 100 : 0;
-      return 1 + (o - 1) * (1 - commFrac);
+      const cc = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
+      return 1 + (o - 1) * (1 - cc);
     };
 
     const Oeff = effOdd(odd, mainComm);
     const commFrac: number[] = [];
     const eBack: number[] = [];
     let stakes: number[] = [];
-    const liabilities: number[] = [];
 
     const onlyBack = !validEntries.some(e => e.isLay);
 
     if (onlyBack) {
       // Modo só back
       validEntries.forEach((entry) => {
-        const L = parseFlex(entry.odd);
-        const comm = parseFlex(entry.commission);
-        commFrac.push(comm > 0 ? comm / 100 : 0);
+        const L = toNum(entry.odd);
+        const comm = toNum(entry.commission);
+        commFrac.push((Number.isFinite(comm) && comm > 0) ? comm / 100 : 0);
         eBack.push(effOdd(L, comm));
       });
 
@@ -253,10 +273,10 @@ export const CalculatorFreeProDirect = () => {
     } else {
       // Modo com lay
       const baseLossLay = stake;
-      validEntries.forEach((entry, idx) => {
-        const L = parseFlex(entry.odd);
-        const comm = parseFlex(entry.commission);
-        const cfrac = comm > 0 ? comm / 100 : 0;
+      validEntries.forEach((entry) => {
+        const L = toNum(entry.odd);
+        const comm = toNum(entry.commission);
+        const cfrac = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
         commFrac.push(cfrac);
 
         if (entry.isLay) {
@@ -267,7 +287,7 @@ export const CalculatorFreeProDirect = () => {
           const e3 = effOdd(L, comm);
           eBack.push(e3);
           const util3 = e3 - 1;
-          if (util3 <= 0) {
+          if (!(util3 > 0)) {
             setResults([]);
             setTotalStake(0);
             setRoi(0);
@@ -278,16 +298,14 @@ export const CalculatorFreeProDirect = () => {
       });
     }
 
-    // Arredondamento
-    stakes = stakes.map(s => {
-      const rounded = Math.round(s / rounding) * rounding;
-      return Math.max(rounded, 0.50);
-    });
+    // Arredondamento igual ao original
+    const roundStep = (v: number) => Math.round(v / rounding) * rounding;
+    stakes = stakes.map(roundStep).map(v => Math.max(v, 0.50));
 
     // Liabilities
-    validEntries.forEach((entry, idx) => {
-      const L = parseFlex(entry.odd);
-      liabilities.push(entry.isLay ? (L - 1) * stakes[idx] : 0);
+    const liabilities = stakes.map((s, idx) => {
+      const L = toNum(validEntries[idx].odd);
+      return validEntries[idx].isLay ? (L - 1) * s : 0;
     });
 
     // Total
@@ -329,8 +347,8 @@ export const CalculatorFreeProDirect = () => {
       },
       ...validEntries.map((entry, idx) => ({
         name: `${idx + 2} vence`,
-        odd: parseFlex(entry.odd).toFixed(2),
-        commission: parseFlex(entry.commission).toFixed(2),
+        odd: toNum(entry.odd).toFixed(2),
+        commission: (Number.isFinite(toNum(entry.commission)) ? toNum(entry.commission) : 0).toFixed(2),
         stake: formatBRL(stakes[idx]) + (entry.isLay ? ' (LAY)' : ''),
         profit: formatBRL(profits[idx + 1])
       }))

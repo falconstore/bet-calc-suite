@@ -274,20 +274,20 @@ export const CalculatorFreeProDirect = () => {
               className={`flex-1 px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                 mode === 'freebet'
                   ? 'bg-gradient-to-r from-[hsl(var(--shark-gradient-start))] to-[hsl(var(--shark-gradient-end))] text-white'
-                  : 'bg-muted text-muted-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
-              🎁 Freebet
+              Freebet
             </button>
             <button
               onClick={() => setMode('cashback')}
               className={`flex-1 px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                 mode === 'cashback'
                   ? 'bg-gradient-to-r from-[hsl(var(--shark-gradient-start))] to-[hsl(var(--shark-gradient-end))] text-white'
-                  : 'bg-muted text-muted-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
-              💰 Cashback
+              Cashback
             </button>
           </div>
         </div>

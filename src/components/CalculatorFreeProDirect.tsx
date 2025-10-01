@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Share2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface FreebetEntry {
   odd: string;
@@ -252,6 +254,127 @@ export const CalculatorFreeProDirect = () => {
     setEntries(newEntries);
   };
 
+  // Serializar estado para URL
+  const serializeState = () => {
+    const state: any = {
+      mode,
+      numEntries,
+      rounding
+    };
+
+    if (mode === 'freebet') {
+      if (houseOdd) state.ho = houseOdd;
+      if (houseCommission) state.hc = houseCommission;
+      if (qualifyingStake) state.qs = qualifyingStake;
+      if (freebetValue) state.fv = freebetValue;
+      if (extractionRate) state.er = extractionRate;
+    } else {
+      if (cashbackOdd) state.co = cashbackOdd;
+      if (cashbackCommission) state.cc = cashbackCommission;
+      if (cashbackStake) state.cs = cashbackStake;
+      if (cashbackRate) state.cr = cashbackRate;
+    }
+
+    // Adicionar entries com valores preenchidos
+    const validEntries = entries.slice(0, numEntries - 1).filter(e => e.odd || e.commission);
+    if (validEntries.length > 0) {
+      state.entries = validEntries.map(e => ({
+        o: e.odd || '',
+        c: e.commission || '',
+        l: e.isLay ? 1 : 0
+      }));
+    }
+
+    return state;
+  };
+
+  // Deserializar URL para estado
+  const deserializeState = (params: URLSearchParams) => {
+    const mode = params.get('mode') as 'freebet' | 'cashback' || 'freebet';
+    setMode(mode);
+
+    const numEntries = parseInt(params.get('numEntries') || '3');
+    setNumEntries(numEntries);
+
+    const rounding = parseFloat(params.get('rounding') || '1.00');
+    setRounding(rounding);
+
+    if (mode === 'freebet') {
+      if (params.has('ho')) setHouseOdd(params.get('ho')!);
+      if (params.has('hc')) setHouseCommission(params.get('hc')!);
+      if (params.has('qs')) setQualifyingStake(params.get('qs')!);
+      if (params.has('fv')) setFreebetValue(params.get('fv')!);
+      if (params.has('er')) setExtractionRate(params.get('er')!);
+    } else {
+      if (params.has('co')) setCashbackOdd(params.get('co')!);
+      if (params.has('cc')) setCashbackCommission(params.get('cc')!);
+      if (params.has('cs')) setCashbackStake(params.get('cs')!);
+      if (params.has('cr')) setCashbackRate(params.get('cr')!);
+    }
+
+    // Restaurar entries
+    const entriesStr = params.get('entries');
+    if (entriesStr) {
+      try {
+        const entriesData = JSON.parse(entriesStr);
+        const newEntries = [...entries];
+        entriesData.forEach((e: any, idx: number) => {
+          if (idx < newEntries.length) {
+            newEntries[idx] = {
+              odd: e.o || '',
+              commission: e.c || '',
+              isLay: e.l === 1
+            };
+          }
+        });
+        setEntries(newEntries);
+      } catch (error) {
+        console.error('Erro ao restaurar entries:', error);
+      }
+    }
+  };
+
+  // Compartilhar calculadora
+  const handleShare = async () => {
+    const state = serializeState();
+    const params = new URLSearchParams();
+    
+    Object.entries(state).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (key === 'entries') {
+          params.set(key, JSON.stringify(value));
+        } else {
+          params.set(key, String(value));
+        }
+      }
+    });
+
+    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}#calculadoras`;
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({
+        title: "Link copiado!",
+        description: "O link da calculadora foi copiado para a área de transferência.",
+      });
+    } catch (error) {
+      toast({
+        title: "Link gerado",
+        description: "Copie o link da barra de endereços do navegador.",
+        variant: "destructive",
+      });
+      window.history.pushState({}, '', url);
+    }
+  };
+
+  // Carregar estado da URL ao montar
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('mode') || params.has('ho') || params.has('co')) {
+      deserializeState(params);
+    }
+  }, []);
+
   return (
     <div className="w-full">
       {/* Header */}
@@ -493,6 +616,18 @@ export const CalculatorFreeProDirect = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Botão Compartilhar */}
+      <div className="flex justify-center mb-6">
+        <button
+          onClick={handleShare}
+          className="btn btn-primary flex items-center gap-2"
+          style={{ minWidth: '200px' }}
+        >
+          <Share2 className="w-4 h-4" />
+          Compartilhar Calculadora
+        </button>
       </div>
 
       {/* Resultados */}

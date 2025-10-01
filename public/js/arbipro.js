@@ -35,6 +35,7 @@ export class ArbiPro {
     
     this.render();
     this.bindEvents();
+    this.loadFromURL();
     this.scheduleUpdate();
   }
 
@@ -402,6 +403,12 @@ export class ArbiPro {
     // Events das casas
     this.bindHouseEvents();
     
+    // Botão Compartilhar
+    const shareBtn = document.getElementById('shareArbiBtn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => this.shareCalculator());
+    }
+
     // Botão Limpar
     const clearBtn = document.getElementById('clearArbiBtn');
     if (clearBtn) {
@@ -617,8 +624,108 @@ export class ArbiPro {
     if (tbody) tbody.innerHTML = rowsHTML;
   }
 
+  serializeState() {
+    const state = {
+      n: this.numHouses,
+      r: this.roundingValue,
+      h: []
+    };
+
+    // Serializar casas com dados preenchidos
+    const active = this.activeHouses();
+    active.forEach((house, idx) => {
+      const h = {};
+      if (house.odd) h.o = house.odd;
+      if (house.stake && house.stake !== "0") h.s = house.stake;
+      if (house.commission !== null) h.c = house.commission;
+      if (house.increase !== null) h.i = house.increase;
+      if (house.freebet) h.f = 1;
+      if (house.lay) h.l = 1;
+      if (house.fixedStake) h.fs = 1;
+      if (house.responsibility) h.re = house.responsibility;
+      
+      // Só adicionar se tiver algum dado
+      if (Object.keys(h).length > 0) {
+        state.h.push(h);
+      }
+    });
+
+    return state;
+  }
+
+  loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    
+    if (!params.has('n') && !params.has('h')) return;
+
+    try {
+      // Restaurar configurações
+      if (params.has('n')) {
+        this.numHouses = parseInt(params.get('n')) || 2;
+        const select = document.getElementById('numHouses');
+        if (select) select.value = String(this.numHouses);
+      }
+
+      if (params.has('r')) {
+        this.roundingValue = parseFloat(params.get('r')) || 0.01;
+        this.displayRounding = String(this.roundingValue);
+        const select = document.getElementById('rounding');
+        if (select) select.value = this.displayRounding;
+      }
+
+      // Restaurar casas
+      if (params.has('h')) {
+        const housesData = JSON.parse(params.get('h'));
+        housesData.forEach((h, idx) => {
+          if (idx >= this.MAX_HOUSES) return;
+          
+          const house = { ...this.houses[idx] };
+          if (h.o) house.odd = h.o;
+          if (h.s) house.stake = h.s;
+          if (h.c !== undefined) house.commission = h.c;
+          if (h.i !== undefined) house.increase = h.i;
+          if (h.f) house.freebet = true;
+          if (h.l) house.lay = true;
+          if (h.fs) house.fixedStake = true;
+          if (h.re) house.responsibility = h.re;
+          
+          this.houses[idx] = house;
+        });
+      }
+
+      this.renderHouses();
+      console.log('✅ Dados carregados da URL');
+    } catch (error) {
+      console.error('Erro ao carregar dados da URL:', error);
+    }
+  }
+
+  async shareCalculator() {
+    const state = this.serializeState();
+    const params = new URLSearchParams();
+    
+    params.set('n', String(state.n));
+    params.set('r', String(state.r));
+    if (state.h.length > 0) {
+      params.set('h', JSON.stringify(state.h));
+    }
+
+    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}#calculadoras`;
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      alert('✅ Link copiado! Compartilhe com outros usuários.');
+    } catch (error) {
+      window.history.pushState({}, '', url);
+      alert('✅ Link gerado! Copie o endereço da barra do navegador.');
+    }
+  }
+
   clearAll() {
     console.log('Limpando todos os dados do ArbiPro...');
+    
+    // Limpar URL
+    window.history.pushState({}, '', window.location.pathname + window.location.hash);
     
     // Reset configurações
     const numHousesSelect = document.getElementById('numHouses');

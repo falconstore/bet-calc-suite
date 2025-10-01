@@ -274,9 +274,9 @@ export const CalculatorFreeProDirect = () => {
         });
       }
     } else {
-      // Modo com lay
+      // Modo com lay - exatamente como no original linha 917-932
       const baseLossLay = stake;
-      validEntries.forEach((entry) => {
+      validEntries.forEach((entry, idx) => {
         const L = toNum(entry.odd);
         const comm = toNum(entry.commission);
         const cfrac = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
@@ -284,10 +284,12 @@ export const CalculatorFreeProDirect = () => {
         oddsOrig.push(L);
 
         if (entry.isLay) {
+          // Linha 921-923 do original
           stakes.push(baseLossLay / (1 - cfrac));
           const denom = L - 1;
           eBack.push(1 + (1 - cfrac) / denom);
         } else {
+          // Linha 925-929 do original
           const e3 = effOdd(L, comm);
           eBack.push(e3);
           const util3 = e3 - 1;

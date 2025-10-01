@@ -138,33 +138,32 @@ export const CalculatorFreeProDirect = () => {
     const roundStep = (v: number) => Math.round(v / rounding) * rounding;
     const roundedStakes = stakes.map(roundStep).map(s => Math.max(s, 0.50));
 
-    // Liabilities
+    // Liabilities e Total Stake calculados juntos como no original
     const liabilities = roundedStakes.map((stake, idx) => {
       return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
     });
 
-    // Total Stake
-    let total = s1;
-    roundedStakes.forEach((stake, idx) => {
-      total += validEntries[idx].isLay ? liabilities[idx] : stake;
-    });
+    // Total usando reduce como no original para garantir consistência
+    const total = s1 + roundedStakes.reduce((acc, stake, idx) => {
+      return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : stake);
+    }, 0);
 
     // Lucro cenário 1 (casa promo vence)
     const net1 = s1 * o1e - total;
 
-    // Lucros nos outros cenários
+    // Lucros nos outros cenários - seguindo exatamente a lógica original
     const profits: number[] = [net1];
-    roundedStakes.forEach((stake, idx) => {
+    for (let win = 0; win < roundedStakes.length; win++) {
       let deficit;
-      if (validEntries[idx].isLay) {
-        const ganhoLay = stake * (1 - commFrac[idx]);
-        const liab = liabilities[idx];
+      if (validEntries[win].isLay) {
+        const ganhoLay = roundedStakes[win] * (1 - commFrac[win]);
+        const liab = liabilities[win];
         deficit = ganhoLay - (total - liab);
       } else {
-        deficit = stake * eBack[idx] - total;
+        deficit = roundedStakes[win] * eBack[win] - total;
       }
       profits.push(deficit + rF);
-    });
+    }
 
     const lucroMedio = profits.reduce((a, b) => a + b, 0) / profits.length;
     const roiCalc = total > 0 ? (lucroMedio / total) * 100 : 0;
@@ -308,28 +307,28 @@ export const CalculatorFreeProDirect = () => {
       return validEntries[idx].isLay ? (L - 1) * s : 0;
     });
 
-    // Total
-    let total = stake;
-    stakes.forEach((s, idx) => {
-      total += validEntries[idx].isLay ? liabilities[idx] : s;
-    });
+    // Total usando reduce como no original
+    const total = stake + stakes.reduce((acc, s, idx) => {
+      const L = toNum(validEntries[idx].odd);
+      return acc + (validEntries[idx].isLay ? (L - 1) * s : s);
+    }, 0);
 
     // Lucro se ganhar aposta principal
     const net1 = stake * Oeff - total;
 
-    // Lucros nas coberturas (com cashback se perder)
+    // Lucros nas coberturas (com cashback se perder) - seguindo lógica original
     const profits: number[] = [net1];
-    stakes.forEach((s, idx) => {
+    for (let win = 0; win < stakes.length; win++) {
       let deficit;
-      if (validEntries[idx].isLay) {
-        const ganhoLay = s * (1 - commFrac[idx]);
-        const liab = liabilities[idx];
+      if (validEntries[win].isLay) {
+        const ganhoLay = stakes[win] * (1 - commFrac[win]);
+        const liab = liabilities[win];
         deficit = ganhoLay - (total - liab);
       } else {
-        deficit = s * eBack[idx] - total;
+        deficit = stakes[win] * eBack[win] - total;
       }
       profits.push(deficit + cashbackAmount);
-    });
+    }
 
     const lucroMedio = profits.reduce((a, b) => a + b, 0) / profits.length;
     const roiCalc = total > 0 ? (lucroMedio / total) * 100 : 0;

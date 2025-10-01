@@ -555,7 +555,7 @@ export const CalculatorFreeProDirect = () => {
           <span className="text-gradient">Calculadora FreePro</span>
         </h1>
         <p className="text-lg text-muted-foreground">
-          Otimize seus lucros com freebets e cashbacks
+          Otimize seus lucros com freebets e cashbacks profissionais
         </p>
       </div>
 
@@ -618,18 +618,6 @@ export const CalculatorFreeProDirect = () => {
             <option value={0.50}>R$ 0,50</option>
             <option value={1.00}>R$ 1,00</option>
           </select>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-value">{formatBRL(totalStake)}</div>
-          <div className="stat-label">Stake Total</div>
-        </div>
-
-        <div className="stat-card">
-          <div className={`stat-value ${roi >= 0 ? 'profit-highlight' : 'profit-negative'}`}>
-            {roi >= 0 ? '+' : ''}{roi.toFixed(2)}%
-          </div>
-          <div className="stat-label">ROI</div>
         </div>
       </div>
 
@@ -838,6 +826,21 @@ export const CalculatorFreeProDirect = () => {
       {results.length > 0 && (
         <div className="card">
           <div className="section-title">Resultados Shark FreePro</div>
+          
+          <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div className="stat-card">
+              <div className="stat-value">{formatBRL(totalStake)}</div>
+              <div className="stat-label">Stake Total</div>
+            </div>
+
+            <div className="stat-card">
+              <div className={`stat-value ${roi >= 0 ? 'profit-highlight' : 'profit-negative'}`}>
+                {roi >= 0 ? '+' : ''}{roi.toFixed(2)}%
+              </div>
+              <div className="stat-label">ROI</div>
+            </div>
+          </div>
+          
           <div style={{ overflowX: 'auto' }}>
             <table className="results-table">
               <thead>

@@ -1,9 +1,11 @@
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
-import { CalculatorCard } from "@/components/CalculatorCard";
-import { RegulatedHouses } from "@/components/RegulatedHouses";
+import { CalculatorArbiPro } from "@/components/CalculatorArbiPro";
+import { RegulatedHousesList } from "@/components/RegulatedHousesList";
 import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   return (
@@ -24,18 +26,24 @@ const Index = () => {
           </div>
           
           <div className="space-y-8">
-            <CalculatorCard />
+            <CalculatorArbiPro />
             
             {/* FreePro Card Placeholder */}
-            <div className="glass-card p-8 text-center border-dashed border-2 border-primary/30">
-              <h3 className="text-2xl font-bold text-muted-foreground mb-2">Calculadora FreePro</h3>
-              <p className="text-muted-foreground">Em breve - Sistema para apostas gratuitas</p>
-            </div>
+            <Card className="glass-card p-12 text-center border-dashed border-2 border-accent/30 space-y-4">
+              <div className="inline-block p-4 rounded-full bg-accent/10 mb-4">
+                <span className="text-4xl">🚀</span>
+              </div>
+              <h3 className="text-3xl font-bold text-gradient mb-2">Calculadora FreePro</h3>
+              <p className="text-lg text-muted-foreground">Em breve - Sistema para apostas gratuitas</p>
+              <Badge variant="outline" className="border-accent/50 text-accent">
+                Coming Soon
+              </Badge>
+            </Card>
           </div>
         </div>
       </section>
 
-      <RegulatedHouses />
+      <RegulatedHousesList />
       <About />
       <Contact />
       
@@ -43,7 +51,7 @@ const Index = () => {
       <footer className="py-8 px-4 bg-muted/50 border-t border-border/50">
         <div className="container mx-auto text-center">
           <p className="text-muted-foreground">
-            © 2024 SharkDev - Ferramentas Profissionais de Apostas • Código Aberto
+            © 2024 Shark Calculadoras - Ferramentas Profissionais de Apostas • Código Aberto
           </p>
         </div>
       </footer>

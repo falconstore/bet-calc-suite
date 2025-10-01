@@ -33,7 +33,7 @@ export const Navigation = () => {
             className="text-2xl font-black"
           >
             <span className="text-gradient">Shark</span>
-            <span className="text-foreground">Dev</span>
+            <span className="text-foreground"> Calculadoras</span>
           </button>
 
           {/* Desktop Navigation */}

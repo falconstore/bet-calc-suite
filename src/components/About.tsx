@@ -30,7 +30,7 @@ export const About = () => {
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-black mb-4">
-            Por que <span className="text-gradient">SharkDev</span>?
+            Por que <span className="text-gradient">Shark Calculadoras</span>?
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Ferramentas profissionais desenvolvidas para apostadores que levam a sério a otimização de resultados
@@ -65,7 +65,7 @@ export const About = () => {
             Ferramentas Gratuitas e de Código Aberto
           </h3>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            O SharkDev é um projeto totalmente gratuito, desenvolvido para ajudar a comunidade de apostadores 
+            Shark Calculadoras é um projeto totalmente gratuito, desenvolvido para ajudar a comunidade de apostadores 
             profissionais a otimizar suas estratégias com ferramentas de qualidade profissional.
           </p>
         </Card>

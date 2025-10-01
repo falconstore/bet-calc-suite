@@ -21,7 +21,7 @@ export const Hero = () => {
           <div className="inline-block">
             <h1 className="text-6xl md:text-8xl font-black tracking-tight mb-4">
               <span className="text-gradient">Shark</span>
-              <span className="text-foreground">Dev</span>
+              <span className="text-foreground"> Calculadoras</span>
             </h1>
           </div>
 

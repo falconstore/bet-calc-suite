@@ -1,9 +1,22 @@
+import { lazy, Suspense } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
-import { CalculatorTabs } from "@/components/CalculatorTabs";
-import { CasasRegulamentadasWrapper } from "@/components/CasasRegulamentadasWrapper";
-import { About } from "@/components/About";
-import { Contact } from "@/components/Contact";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load heavy components for better performance
+const CalculatorTabs = lazy(() => import("@/components/CalculatorTabs").then(m => ({ default: m.CalculatorTabs })));
+const CasasRegulamentadasWrapper = lazy(() => import("@/components/CasasRegulamentadasWrapper").then(m => ({ default: m.CasasRegulamentadasWrapper })));
+const About = lazy(() => import("@/components/About").then(m => ({ default: m.About })));
+const Contact = lazy(() => import("@/components/Contact").then(m => ({ default: m.Contact })));
+
+const LoadingSection = () => (
+  <div className="py-20 px-4">
+    <div className="container mx-auto space-y-4">
+      <Skeleton className="h-12 w-64 mx-auto" />
+      <Skeleton className="h-64 w-full" />
+    </div>
+  </div>
+);
 
 const Index = () => {
   return (
@@ -12,14 +25,23 @@ const Index = () => {
       <Hero />
       
       {/* Calculadoras em Abas */}
-      <CalculatorTabs />
+      <Suspense fallback={<LoadingSection />}>
+        <CalculatorTabs />
+      </Suspense>
 
       {/* Casas Regulamentadas */}
-      <CasasRegulamentadasWrapper />
+      <Suspense fallback={<LoadingSection />}>
+        <CasasRegulamentadasWrapper />
+      </Suspense>
       
       {/* Sobre e Contato */}
-      <About />
-      <Contact />
+      <Suspense fallback={<LoadingSection />}>
+        <About />
+      </Suspense>
+      
+      <Suspense fallback={<LoadingSection />}>
+        <Contact />
+      </Suspense>
       
       {/* Footer */}
       <footer className="py-8 px-4 bg-muted/50 border-t border-border/50">

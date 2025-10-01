@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Link, Trash2 } from "lucide-react";
+import { Link, Trash2, Loader2 } from "lucide-react";
 
 interface FreebetEntry {
   odd: string;
@@ -12,6 +12,8 @@ export const CalculatorFreeProDirect = () => {
   const [mode, setMode] = useState<'freebet' | 'cashback'>('freebet');
   const [numEntries, setNumEntries] = useState(3);
   const [rounding, setRounding] = useState(1.00);
+  const [isSharing, setIsSharing] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   
   // Freebet fields
   const [houseOdd, setHouseOdd] = useState("");
@@ -464,6 +466,7 @@ export const CalculatorFreeProDirect = () => {
 
   // Compartilhar calculadora
   const handleShare = async () => {
+    setIsSharing(true);
     const state = serializeState();
     const params = new URLSearchParams();
     
@@ -491,11 +494,14 @@ export const CalculatorFreeProDirect = () => {
         description: "Copie o endereço da barra do navegador.",
       });
       window.history.pushState({}, '', url);
+    } finally {
+      setTimeout(() => setIsSharing(false), 500);
     }
   };
 
   // Limpar todos os dados
   const handleClear = () => {
+    setIsClearing(true);
     // Limpar URL
     window.history.pushState({}, '', window.location.pathname + window.location.hash);
     
@@ -529,6 +535,8 @@ export const CalculatorFreeProDirect = () => {
       title: "✅ Dados limpos",
       description: "Todos os campos foram limpos com sucesso.",
     });
+    
+    setTimeout(() => setIsClearing(false), 500);
   };
 
   // Carregar estado da URL ao montar
@@ -790,19 +798,39 @@ export const CalculatorFreeProDirect = () => {
       <div className="flex justify-center gap-4 mb-6" style={{ flexWrap: 'wrap' }}>
         <button
           onClick={handleShare}
+          disabled={isSharing}
           className="btn btn-primary flex items-center gap-2"
           style={{ minWidth: '180px' }}
         >
-          <Link className="w-4 h-4" />
-          Compartilhar
+          {isSharing ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Copiando...
+            </>
+          ) : (
+            <>
+              <Link className="w-4 h-4" />
+              Compartilhar
+            </>
+          )}
         </button>
         <button
           onClick={handleClear}
+          disabled={isClearing}
           className="btn btn-secondary flex items-center gap-2"
           style={{ minWidth: '180px' }}
         >
-          <Trash2 className="w-4 h-4" />
-          Limpar Dados
+          {isClearing ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Limpando...
+            </>
+          ) : (
+            <>
+              <Trash2 className="w-4 h-4" />
+              Limpar Dados
+            </>
+          )}
         </button>
       </div>
 

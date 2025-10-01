@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Share2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface FreebetEntry {
@@ -59,7 +58,7 @@ export const CalculatorFreeProDirect = () => {
     const F = parseFlex(freebetValue);
     const r = parseFlex(extractionRate);
 
-    if (o1 <= 0 || F <= 0) {
+    if (o1 <= 1 || F <= 0 || r <= 0 || r > 100 || s1 <= 0) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
@@ -67,7 +66,7 @@ export const CalculatorFreeProDirect = () => {
     }
 
     const activeEntries = entries.slice(0, numEntries - 1);
-    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 0);
+    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 1);
     
     if (validEntries.length === 0) {
       setResults([]);
@@ -76,65 +75,100 @@ export const CalculatorFreeProDirect = () => {
       return;
     }
 
-    // Cálculo simplificado de Freebet
-    const effOdd1 = o1 * (1 - c1 / 100);
-    const target = F * (r / 100);
-    
+    // Cálculo Freebet com lógica correta
+    const effOdd = (odd: number, comm: number) => {
+      const commFrac = comm > 0 ? comm / 100 : 0;
+      return 1 + (odd - 1) * (1 - commFrac);
+    };
+
+    const o1e = effOdd(o1, c1);
+    const rF = (r / 100) * F;
+    const A = s1 * o1e - rF;
+
+    const stakes: number[] = [];
+    const eBack: number[] = [];
+    const commFrac: number[] = [];
+    const liabilities: number[] = [];
+
+    validEntries.forEach((entry, idx) => {
+      const L = parseFlex(entry.odd);
+      const comm = parseFlex(entry.commission);
+      const cfrac = comm > 0 ? comm / 100 : 0;
+      commFrac.push(cfrac);
+
+      if (entry.isLay) {
+        const denom = L - 1;
+        if (denom <= 0) {
+          setResults([]);
+          setTotalStake(0);
+          setRoi(0);
+          return;
+        }
+        const eLay = 1 + (1 - cfrac) / denom;
+        const equivStake = A / eLay;
+        stakes.push(equivStake / denom);
+        eBack.push(eLay);
+      } else {
+        const e = effOdd(L, comm);
+        eBack.push(e);
+        stakes.push(A / e);
+      }
+    });
+
+    // Arredondamento
+    const roundedStakes = stakes.map(s => {
+      const rounded = Math.round(s / rounding) * rounding;
+      return Math.max(rounded, 0.50);
+    });
+
+    // Liabilities para lay bets
+    validEntries.forEach((entry, idx) => {
+      const L = parseFlex(entry.odd);
+      liabilities.push(entry.isLay ? (L - 1) * roundedStakes[idx] : 0);
+    });
+
+    // Total Stake
     let total = s1;
-    const profits: number[] = [0];
-    const stakes: number[] = [s1];
-
-    validEntries.forEach((entry, idx) => {
-      const odd = parseFlex(entry.odd);
-      const comm = parseFlex(entry.commission);
-      const effOdd = odd * (1 - comm / 100);
-      
-      let stake = 0;
-      if (entry.isLay) {
-        stake = target / (odd - comm / 100);
-      } else {
-        stake = target / effOdd;
-      }
-      
-      stake = Math.ceil(stake / rounding) * rounding;
-      stakes.push(stake);
-      total += stake;
+    roundedStakes.forEach((stake, idx) => {
+      total += validEntries[idx].isLay ? liabilities[idx] : stake;
     });
 
-    // Calcular lucros
-    validEntries.forEach((entry, idx) => {
-      const stake = stakes[idx + 1];
-      const odd = parseFlex(entry.odd);
-      const comm = parseFlex(entry.commission);
-      
-      if (entry.isLay) {
-        const resp = stake * (odd - 1);
-        profits.push(stake * (1 - comm / 100) - resp);
+    // Lucro cenário 1 (casa promo vence)
+    const net1 = s1 * o1e - total;
+
+    // Lucros nos outros cenários
+    const profits: number[] = [net1];
+    roundedStakes.forEach((stake, idx) => {
+      let deficit;
+      if (validEntries[idx].isLay) {
+        const ganhoLay = stake * (1 - commFrac[idx]);
+        const liab = liabilities[idx];
+        deficit = ganhoLay - (total - liab);
       } else {
-        const effOdd = odd * (1 - comm / 100);
-        profits.push(stake * effOdd - total);
+        deficit = stake * eBack[idx] - total;
       }
+      profits.push(deficit + rF);
     });
 
-    const minProfit = Math.min(...profits);
-    const roiCalc = total > 0 ? (minProfit / total) * 100 : 0;
+    const lucroMedio = profits.reduce((a, b) => a + b, 0) / profits.length;
+    const roiCalc = total > 0 ? (lucroMedio / total) * 100 : 0;
 
     setTotalStake(total);
     setRoi(roiCalc);
     
     const resultsData = [
       {
-        name: "Qualificação",
+        name: "1 vence (Casa Promo)",
         odd: o1.toFixed(2),
         commission: c1.toFixed(2),
         stake: formatBRL(s1),
         profit: formatBRL(profits[0])
       },
       ...validEntries.map((entry, idx) => ({
-        name: `Resultado ${idx + 2}`,
+        name: `${idx + 2} vence`,
         odd: parseFlex(entry.odd).toFixed(2),
         commission: parseFlex(entry.commission).toFixed(2),
-        stake: formatBRL(stakes[idx + 1]),
+        stake: formatBRL(roundedStakes[idx]) + (entry.isLay ? ' (LAY)' : ''),
         profit: formatBRL(profits[idx + 1])
       }))
     ];
@@ -143,12 +177,12 @@ export const CalculatorFreeProDirect = () => {
   };
 
   const calculateCashback = () => {
-    const o1 = parseFlex(cashbackOdd);
-    const c1 = parseFlex(cashbackCommission);
-    const s1 = parseFlex(cashbackStake);
+    const odd = parseFlex(cashbackOdd);
+    const stake = parseFlex(cashbackStake);
     const cbRate = parseFlex(cashbackRate);
+    const mainComm = parseFlex(cashbackCommission);
 
-    if (o1 <= 0 || s1 <= 0 || cbRate <= 0) {
+    if (odd <= 1 || stake <= 0 || cbRate < 0 || cbRate > 100) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
@@ -156,7 +190,7 @@ export const CalculatorFreeProDirect = () => {
     }
 
     const activeEntries = entries.slice(0, numEntries - 1);
-    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 0);
+    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 1);
     
     if (validEntries.length === 0) {
       setResults([]);
@@ -165,72 +199,139 @@ export const CalculatorFreeProDirect = () => {
       return;
     }
 
-    // Cálculo de Cashback
-    const cashbackAmount = s1 * (cbRate / 100);
-    const effOdd1 = o1 * (1 - c1 / 100);
-    
-    let total = s1;
-    const profits: number[] = [];
-    const stakes: number[] = [s1];
+    const cashbackAmount = stake * (cbRate / 100);
 
-    // Lucro se ganhar a aposta principal
-    profits.push((s1 * effOdd1) - total);
+    const effOdd = (o: number, comm: number) => {
+      const commFrac = comm > 0 ? comm / 100 : 0;
+      return 1 + (o - 1) * (1 - commFrac);
+    };
 
-    validEntries.forEach((entry, idx) => {
-      const odd = parseFlex(entry.odd);
-      const comm = parseFlex(entry.commission);
-      const effOdd = odd * (1 - comm / 100);
-      
-      let stake = 0;
-      if (entry.isLay) {
-        stake = (s1 * effOdd1) / (odd - comm / 100);
+    const Oeff = effOdd(odd, mainComm);
+    const commFrac: number[] = [];
+    const eBack: number[] = [];
+    let stakes: number[] = [];
+    const liabilities: number[] = [];
+
+    const onlyBack = !validEntries.some(e => e.isLay);
+
+    if (onlyBack) {
+      // Modo só back
+      validEntries.forEach((entry) => {
+        const L = parseFlex(entry.odd);
+        const comm = parseFlex(entry.commission);
+        commFrac.push(comm > 0 ? comm / 100 : 0);
+        eBack.push(effOdd(L, comm));
+      });
+
+      const H = eBack.reduce((a, e) => a + (1 / e), 0);
+
+      if (H >= 1) {
+        // Modo de cobertura
+        const baseLoss = stake;
+        validEntries.forEach((entry, idx) => {
+          const util = eBack[idx] - 1;
+          if (util <= 0) {
+            setResults([]);
+            setTotalStake(0);
+            setRoi(0);
+            return;
+          }
+          stakes.push(baseLoss / util);
+        });
       } else {
-        stake = (s1 * effOdd1) / effOdd;
+        // Modo nivelado
+        const P = stake;
+        const C = cashbackAmount;
+        const N = -P * (1 - Oeff + H * Oeff) + H * C;
+        const S_total = P * Oeff - N;
+        const numer = N + S_total - C;
+        
+        validEntries.forEach((entry, idx) => {
+          stakes.push(numer / eBack[idx]);
+        });
       }
-      
-      stake = Math.ceil(stake / rounding) * rounding;
-      stakes.push(stake);
-      total += stake;
+    } else {
+      // Modo com lay
+      const baseLossLay = stake;
+      validEntries.forEach((entry, idx) => {
+        const L = parseFlex(entry.odd);
+        const comm = parseFlex(entry.commission);
+        const cfrac = comm > 0 ? comm / 100 : 0;
+        commFrac.push(cfrac);
+
+        if (entry.isLay) {
+          stakes.push(baseLossLay / (1 - cfrac));
+          const denom = L - 1;
+          eBack.push(1 + (1 - cfrac) / denom);
+        } else {
+          const e3 = effOdd(L, comm);
+          eBack.push(e3);
+          const util3 = e3 - 1;
+          if (util3 <= 0) {
+            setResults([]);
+            setTotalStake(0);
+            setRoi(0);
+            return;
+          }
+          stakes.push(baseLossLay / util3);
+        }
+      });
+    }
+
+    // Arredondamento
+    stakes = stakes.map(s => {
+      const rounded = Math.round(s / rounding) * rounding;
+      return Math.max(rounded, 0.50);
     });
 
-    // Recalcular lucros considerando cashback
-    profits[0] = (s1 * effOdd1) - total;
-    
+    // Liabilities
     validEntries.forEach((entry, idx) => {
-      const stake = stakes[idx + 1];
-      const odd = parseFlex(entry.odd);
-      const comm = parseFlex(entry.commission);
-      
-      if (entry.isLay) {
-        const resp = stake * (odd - 1);
-        // Se perder a aposta principal, ganha cashback
-        profits.push(stake * (1 - comm / 100) - resp + cashbackAmount);
-      } else {
-        const effOdd = odd * (1 - comm / 100);
-        // Se perder a aposta principal, ganha cashback
-        profits.push(stake * effOdd - total + cashbackAmount);
-      }
+      const L = parseFlex(entry.odd);
+      liabilities.push(entry.isLay ? (L - 1) * stakes[idx] : 0);
     });
 
-    const minProfit = Math.min(...profits);
-    const roiCalc = total > 0 ? (minProfit / total) * 100 : 0;
+    // Total
+    let total = stake;
+    stakes.forEach((s, idx) => {
+      total += validEntries[idx].isLay ? liabilities[idx] : s;
+    });
+
+    // Lucro se ganhar aposta principal
+    const net1 = stake * Oeff - total;
+
+    // Lucros nas coberturas (com cashback se perder)
+    const profits: number[] = [net1];
+    stakes.forEach((s, idx) => {
+      let deficit;
+      if (validEntries[idx].isLay) {
+        const ganhoLay = s * (1 - commFrac[idx]);
+        const liab = liabilities[idx];
+        deficit = ganhoLay - (total - liab);
+      } else {
+        deficit = s * eBack[idx] - total;
+      }
+      profits.push(deficit + cashbackAmount);
+    });
+
+    const lucroMedio = profits.reduce((a, b) => a + b, 0) / profits.length;
+    const roiCalc = total > 0 ? (lucroMedio / total) * 100 : 0;
 
     setTotalStake(total);
     setRoi(roiCalc);
     
     const resultsData = [
       {
-        name: "Qualificação",
-        odd: o1.toFixed(2),
-        commission: c1.toFixed(2),
-        stake: formatBRL(s1),
+        name: "1 vence (Ganhou)",
+        odd: odd.toFixed(2),
+        commission: mainComm.toFixed(2),
+        stake: formatBRL(stake),
         profit: formatBRL(profits[0])
       },
       ...validEntries.map((entry, idx) => ({
-        name: `Resultado ${idx + 2}`,
+        name: `${idx + 2} vence`,
         odd: parseFlex(entry.odd).toFixed(2),
         commission: parseFlex(entry.commission).toFixed(2),
-        stake: formatBRL(stakes[idx + 1]),
+        stake: formatBRL(stakes[idx]) + (entry.isLay ? ' (LAY)' : ''),
         profit: formatBRL(profits[idx + 1])
       }))
     ];

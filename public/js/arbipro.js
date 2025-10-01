@@ -679,22 +679,24 @@ export class ArbiPro {
         housesData.forEach((h, idx) => {
           if (idx >= this.MAX_HOUSES) return;
           
-          const house = { ...this.houses[idx] };
-          if (h.o) house.odd = h.o;
-          if (h.s) house.stake = h.s;
-          if (h.c !== undefined) house.commission = h.c;
-          if (h.i !== undefined) house.increase = h.i;
-          if (h.f) house.freebet = true;
-          if (h.l) house.lay = true;
-          if (h.fs) house.fixedStake = true;
-          if (h.re) house.responsibility = h.re;
+          const houseUpdate = {};
+          if (h.o) houseUpdate.odd = h.o;
+          if (h.s) houseUpdate.stake = h.s;
+          if (h.c !== undefined) houseUpdate.commission = h.c;
+          if (h.i !== undefined) houseUpdate.increase = h.i;
+          if (h.f) houseUpdate.freebet = true;
+          if (h.l) houseUpdate.lay = true;
+          if (h.fs) houseUpdate.fixedStake = true;
+          if (h.re) houseUpdate.responsibility = h.re;
           
-          this.houses[idx] = house;
+          // Usar setHouse para garantir que finalOdd seja calculado corretamente
+          this.setHouse(idx, houseUpdate);
         });
       }
 
+      // Renderizar e recalcular
       this.renderHouses();
-      this.scheduleUpdate(); // Recalcular após carregar da URL
+      this.scheduleUpdate();
       console.log('✅ Dados carregados da URL');
     } catch (error) {
       console.error('Erro ao carregar dados da URL:', error);

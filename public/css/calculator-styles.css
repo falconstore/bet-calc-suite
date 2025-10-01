@@ -232,17 +232,28 @@
 
 #panel-1 .profit-positive,
 #panel-2 .profit-positive {
-  color: hsl(var(--success));
-  font-weight: 800;
-  font-size: 1.5rem;
-  text-shadow: 0 0 20px hsl(var(--success) / 0.5);
+  color: hsl(var(--success)) !important;
+  font-weight: 700;
 }
 
 #panel-1 .profit-negative,
 #panel-2 .profit-negative {
-  color: hsl(var(--destructive));
-  font-weight: 800;
+  color: hsl(var(--destructive)) !important;
+  font-weight: 700;
+}
+
+/* Para valores grandes (stat cards) */
+#panel-1 .stat-value.profit-positive,
+#panel-2 .stat-value.profit-positive {
   font-size: 1.5rem;
+  font-weight: 800;
+  text-shadow: 0 0 20px hsl(var(--success) / 0.5);
+}
+
+#panel-1 .stat-value.profit-negative,
+#panel-2 .stat-value.profit-negative {
+  font-size: 1.5rem;
+  font-weight: 800;
 }
 
 /* === BADGES === */

@@ -111,4 +111,21 @@ All colors MUST be HSL.
     box-shadow: 0 0 30px hsl(var(--glow) / 0.4);
     transform: translateY(-2px);
   }
+  
+  /* Classes de lucro para tabelas */
+  .profit-positive {
+    color: hsl(var(--success)) !important;
+    font-weight: 700;
+  }
+  
+  .profit-negative {
+    color: hsl(var(--destructive)) !important;
+    font-weight: 700;
+  }
+  
+  .profit-highlight {
+    color: hsl(var(--success));
+    font-weight: 800;
+    text-shadow: 0 0 20px hsl(var(--success) / 0.4);
+  }
 }

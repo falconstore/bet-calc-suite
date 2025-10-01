@@ -51,8 +51,14 @@
   text-shadow: 0 0 20px hsl(var(--success) / 0.4);
 }
 
+.profit-positive {
+  color: hsl(var(--success)) !important;
+  font-weight: 700;
+}
+
 .profit-negative {
-  color: hsl(var(--destructive));
+  color: hsl(var(--destructive)) !important;
+  font-weight: 700;
 }
 
 /* Seção de título */

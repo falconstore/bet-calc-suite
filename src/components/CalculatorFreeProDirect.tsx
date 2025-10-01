@@ -18,6 +18,12 @@ export const CalculatorFreeProDirect = () => {
   const [freebetValue, setFreebetValue] = useState("");
   const [extractionRate, setExtractionRate] = useState("70");
   
+  // Cashback fields
+  const [cashbackOdd, setCashbackOdd] = useState("");
+  const [cashbackCommission, setCashbackCommission] = useState("");
+  const [cashbackStake, setCashbackStake] = useState("");
+  const [cashbackRate, setCashbackRate] = useState("");
+  
   // Coverage entries
   const [entries, setEntries] = useState<FreebetEntry[]>(
     Array(5).fill(null).map(() => ({ odd: "", commission: "", isLay: false }))
@@ -134,11 +140,111 @@ export const CalculatorFreeProDirect = () => {
     setResults(resultsData);
   };
 
+  const calculateCashback = () => {
+    const o1 = parseFlex(cashbackOdd);
+    const c1 = parseFlex(cashbackCommission);
+    const s1 = parseFlex(cashbackStake);
+    const cbRate = parseFlex(cashbackRate);
+
+    if (o1 <= 0 || s1 <= 0 || cbRate <= 0) {
+      setResults([]);
+      setTotalStake(0);
+      setRoi(0);
+      return;
+    }
+
+    const activeEntries = entries.slice(0, numEntries - 1);
+    const validEntries = activeEntries.filter(e => parseFlex(e.odd) > 0);
+    
+    if (validEntries.length === 0) {
+      setResults([]);
+      setTotalStake(0);
+      setRoi(0);
+      return;
+    }
+
+    // Cálculo de Cashback
+    const cashbackAmount = s1 * (cbRate / 100);
+    const effOdd1 = o1 * (1 - c1 / 100);
+    
+    let total = s1;
+    const profits: number[] = [];
+    const stakes: number[] = [s1];
+
+    // Lucro se ganhar a aposta principal
+    profits.push((s1 * effOdd1) - total);
+
+    validEntries.forEach((entry, idx) => {
+      const odd = parseFlex(entry.odd);
+      const comm = parseFlex(entry.commission);
+      const effOdd = odd * (1 - comm / 100);
+      
+      let stake = 0;
+      if (entry.isLay) {
+        stake = (s1 * effOdd1) / (odd - comm / 100);
+      } else {
+        stake = (s1 * effOdd1) / effOdd;
+      }
+      
+      stake = Math.ceil(stake / rounding) * rounding;
+      stakes.push(stake);
+      total += stake;
+    });
+
+    // Recalcular lucros considerando cashback
+    profits[0] = (s1 * effOdd1) - total;
+    
+    validEntries.forEach((entry, idx) => {
+      const stake = stakes[idx + 1];
+      const odd = parseFlex(entry.odd);
+      const comm = parseFlex(entry.commission);
+      
+      if (entry.isLay) {
+        const resp = stake * (odd - 1);
+        // Se perder a aposta principal, ganha cashback
+        profits.push(stake * (1 - comm / 100) - resp + cashbackAmount);
+      } else {
+        const effOdd = odd * (1 - comm / 100);
+        // Se perder a aposta principal, ganha cashback
+        profits.push(stake * effOdd - total + cashbackAmount);
+      }
+    });
+
+    const minProfit = Math.min(...profits);
+    const roiCalc = total > 0 ? (minProfit / total) * 100 : 0;
+
+    setTotalStake(total);
+    setRoi(roiCalc);
+    
+    const resultsData = [
+      {
+        name: "Qualificação",
+        odd: o1.toFixed(2),
+        commission: c1.toFixed(2),
+        stake: formatBRL(s1),
+        profit: formatBRL(profits[0])
+      },
+      ...validEntries.map((entry, idx) => ({
+        name: `Resultado ${idx + 2}`,
+        odd: parseFlex(entry.odd).toFixed(2),
+        commission: parseFlex(entry.commission).toFixed(2),
+        stake: formatBRL(stakes[idx + 1]),
+        profit: formatBRL(profits[idx + 1])
+      }))
+    ];
+    
+    setResults(resultsData);
+  };
+
   useEffect(() => {
     if (mode === 'freebet') {
       calculateFreebet();
+    } else {
+      calculateCashback();
     }
-  }, [houseOdd, houseCommission, qualifyingStake, freebetValue, extractionRate, entries, numEntries, rounding, mode]);
+  }, [houseOdd, houseCommission, qualifyingStake, freebetValue, extractionRate, 
+      cashbackOdd, cashbackCommission, cashbackStake, cashbackRate,
+      entries, numEntries, rounding, mode]);
 
   const updateEntry = (index: number, field: keyof FreebetEntry, value: any) => {
     const newEntries = [...entries];
@@ -288,6 +394,59 @@ export const CalculatorFreeProDirect = () => {
               placeholder="ex: 70"
               className="form-input"
             />
+          </div>
+        </div>
+      )}
+
+      {/* Casa Promoção - Cashback */}
+      {mode === 'cashback' && (
+        <div className="card mb-6">
+          <div className="section-title">Casa Promoção (Cashback)</div>
+          
+          <div className="grid-2 mb-4">
+            <div className="form-group">
+              <label className="form-label">Odd da Casa</label>
+              <input
+                type="text"
+                value={cashbackOdd}
+                onChange={(e) => setCashbackOdd(e.target.value)}
+                placeholder="ex: 3.00"
+                className="form-input"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Comissão (%)</label>
+              <input
+                type="text"
+                value={cashbackCommission}
+                onChange={(e) => setCashbackCommission(e.target.value)}
+                placeholder="ex: 0"
+                className="form-input"
+              />
+            </div>
+          </div>
+
+          <div className="grid-2 mb-4">
+            <div className="form-group">
+              <label className="form-label">Stake Qualificação</label>
+              <input
+                type="text"
+                value={cashbackStake}
+                onChange={(e) => setCashbackStake(e.target.value)}
+                placeholder="ex: 100"
+                className="form-input"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Taxa de Cashback (%)</label>
+              <input
+                type="text"
+                value={cashbackRate}
+                onChange={(e) => setCashbackRate(e.target.value)}
+                placeholder="ex: 10"
+                className="form-input"
+              />
+            </div>
           </div>
         </div>
       )}

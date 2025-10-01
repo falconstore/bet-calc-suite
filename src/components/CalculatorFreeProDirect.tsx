@@ -815,8 +815,8 @@ export const CalculatorFreeProDirect = () => {
                   <th>Odd</th>
                   <th>Comissão</th>
                   <th>Stake</th>
-                  <th>Déficit</th>
                   {results[0]?.liability !== undefined && <th>Responsabilidade</th>}
+                  <th>Déficit</th>
                   <th>Lucro</th>
                 </tr>
               </thead>
@@ -827,12 +827,12 @@ export const CalculatorFreeProDirect = () => {
                     <td>{result.odd}</td>
                     <td>{result.commission}%</td>
                     <td>{result.stake}</td>
-                    <td className={parseFlex(result.deficit) >= 0 ? 'profit-positive' : 'profit-negative'}>
-                      {result.deficit}
-                    </td>
                     {result.liability !== undefined && (
                       <td>{result.liability}</td>
                     )}
+                    <td className={parseFlex(result.deficit) >= 0 ? 'profit-positive' : 'profit-negative'}>
+                      {result.deficit}
+                    </td>
                     <td className={parseFlex(result.profit) >= 0 ? 'profit-positive' : 'profit-negative'}>
                       {result.profit}
                     </td>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Percent } from "lucide-react";
 
 export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,6 +17,10 @@ export const Navigation = () => {
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setIsMobileMenuOpen(false);
+  };
+
+  const handleBetbraClick = () => {
+    window.open("SEU_LINK_DE_INDICACAO_AQUI", "_blank");
   };
 
   return (
@@ -37,7 +41,18 @@ export const Navigation = () => {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
+            {/* Botão Betbra Destacado */}
+            <Button
+              onClick={handleBetbraClick}
+              className="bg-primary/90 hover:bg-primary text-primary-foreground shadow-[0_0_20px_-5px_hsl(var(--primary)/0.5)] hover:shadow-[0_0_25px_-5px_hsl(var(--primary)/0.6)] transition-all hover-scale"
+            >
+              <Percent className="w-4 h-4 mr-2" />
+              Betbra 2.8%
+            </Button>
+
+            <div className="w-px h-6 bg-border/50" />
+
             <Button
               variant="ghost"
               onClick={() => scrollToSection("calculadoras")}
@@ -82,6 +97,15 @@ export const Navigation = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2 animate-fade-in">
+            {/* Botão Betbra Mobile */}
+            <Button
+              onClick={handleBetbraClick}
+              className="w-full bg-primary/90 hover:bg-primary text-primary-foreground mb-3"
+            >
+              <Percent className="w-4 h-4 mr-2" />
+              Betbra 2.8% - Oferta Exclusiva
+            </Button>
+
             <Button
               variant="ghost"
               onClick={() => scrollToSection("calculadoras")}

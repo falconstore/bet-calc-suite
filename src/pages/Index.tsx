@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
+import { BetbraPromo } from "@/components/BetbraPromo";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Lazy load heavy components for better performance
@@ -23,6 +24,9 @@ const Index = () => {
     <div className="min-h-screen">
       <Navigation />
       <Hero />
+      
+      {/* Promoção Betbra */}
+      <BetbraPromo />
       
       {/* Calculadoras em Abas */}
       <Suspense fallback={<LoadingSection />}>

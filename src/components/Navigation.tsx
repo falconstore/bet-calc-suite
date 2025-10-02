@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Menu, X, Percent } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -88,10 +88,9 @@ export const Navigation = () => {
             {/* Botão Betbra Destacado */}
             <Button
               onClick={handleBetbraClick}
-              className="relative bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all animate-glow-pulse"
+              className="relative bg-success text-white hover:bg-success/90 shadow-lg hover:shadow-xl transition-all"
             >
               <span className="flex flex-col items-center gap-0 leading-tight">
-                <Percent className="w-5 h-5 mb-0.5" />
                 <span className="font-bold text-xs">Cadastro</span>
                 <span className="font-bold text-sm">Betbra</span>
               </span>
@@ -115,14 +114,11 @@ export const Navigation = () => {
             {/* Botão Betbra Mobile */}
             <Button
               onClick={handleBetbraClick}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg mb-3 animate-glow-pulse"
+              className="w-full bg-success text-white hover:bg-success/90 shadow-lg mb-3"
             >
-              <span className="flex items-center gap-2">
-                <Percent className="w-5 h-5" />
-                <span className="flex flex-col items-start leading-tight">
-                  <span className="font-bold text-sm">Cadastro Betbra</span>
-                  <span className="text-xs opacity-90">Oferta Exclusiva</span>
-                </span>
+              <span className="flex flex-col items-center leading-tight">
+                <span className="font-bold text-sm">Cadastro Betbra</span>
+                <span className="text-xs opacity-90">Oferta Exclusiva</span>
               </span>
             </Button>
 

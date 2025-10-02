@@ -41,18 +41,7 @@ export const Navigation = () => {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4">
-            {/* Botão Betbra Destacado */}
-            <Button
-              onClick={handleBetbraClick}
-              className="bg-primary/90 hover:bg-primary text-primary-foreground shadow-[0_0_20px_-5px_hsl(var(--primary)/0.5)] hover:shadow-[0_0_25px_-5px_hsl(var(--primary)/0.6)] transition-all hover-scale"
-            >
-              <Percent className="w-4 h-4 mr-2" />
-              Betbra 2.8%
-            </Button>
-
-            <div className="w-px h-6 bg-border/50" />
-
+          <div className="hidden md:flex items-center gap-6">
             <Button
               variant="ghost"
               onClick={() => scrollToSection("calculadoras")}
@@ -81,6 +70,23 @@ export const Navigation = () => {
             >
               Contato
             </Button>
+            
+            {/* Separador */}
+            <div className="w-px h-6 bg-border/50" />
+            
+            {/* Botão Betbra Destacado */}
+            <Button
+              onClick={handleBetbraClick}
+              variant="outline"
+              className="relative border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group"
+            >
+              <span className="flex items-center gap-2">
+                <Percent className="w-4 h-4 text-primary" />
+                <span className="font-semibold">2.8%</span>
+                <span className="text-muted-foreground">Betbra</span>
+              </span>
+              <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -100,10 +106,12 @@ export const Navigation = () => {
             {/* Botão Betbra Mobile */}
             <Button
               onClick={handleBetbraClick}
-              className="w-full bg-primary/90 hover:bg-primary text-primary-foreground mb-3"
+              variant="outline"
+              className="w-full border-primary/30 bg-primary/5 hover:bg-primary/10"
             >
-              <Percent className="w-4 h-4 mr-2" />
-              Betbra 2.8% - Oferta Exclusiva
+              <Percent className="w-4 h-4 mr-2 text-primary" />
+              <span className="font-semibold">2.8% Betbra</span>
+              <span className="text-xs text-muted-foreground ml-2">- Oferta Exclusiva</span>
             </Button>
 
             <Button

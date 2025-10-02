@@ -62,6 +62,13 @@ export const Navigation = () => {
             </Button>
             <Button
               variant="ghost"
+              onClick={handleVideoClick}
+              className="hover:text-primary"
+            >
+              Video Calculadoras
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => scrollToSection("sobre")}
               className="hover:text-primary"
             >
@@ -75,28 +82,19 @@ export const Navigation = () => {
               Contato
             </Button>
             
-            <Button
-              variant="ghost"
-              onClick={handleVideoClick}
-              className="hover:text-primary"
-            >
-              Video Calculadoras
-            </Button>
-            
             {/* Separador */}
             <div className="w-px h-6 bg-border/50" />
             
             {/* Botão Betbra Destacado */}
             <Button
               onClick={handleBetbraClick}
-              variant="outline"
-              className="relative border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group"
+              className="relative bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all animate-glow-pulse"
             >
               <span className="flex flex-col items-center gap-0 leading-tight">
-                <span className="font-semibold text-xs">Cadastro</span>
-                <span className="font-semibold">Betbra</span>
+                <Percent className="w-5 h-5 mb-0.5" />
+                <span className="font-bold text-xs">Cadastro</span>
+                <span className="font-bold text-sm">Betbra</span>
               </span>
-              <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Button>
           </div>
 
@@ -117,12 +115,14 @@ export const Navigation = () => {
             {/* Botão Betbra Mobile */}
             <Button
               onClick={handleBetbraClick}
-              variant="outline"
-              className="w-full border-primary/30 bg-primary/5 hover:bg-primary/10"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg mb-3 animate-glow-pulse"
             >
-              <span className="flex flex-col items-center gap-0 leading-tight">
-                <span className="font-semibold text-xs">Cadastro Betbra</span>
-                <span className="text-xs text-muted-foreground">Oferta Exclusiva</span>
+              <span className="flex items-center gap-2">
+                <Percent className="w-5 h-5" />
+                <span className="flex flex-col items-start leading-tight">
+                  <span className="font-bold text-sm">Cadastro Betbra</span>
+                  <span className="text-xs opacity-90">Oferta Exclusiva</span>
+                </span>
               </span>
             </Button>
 
@@ -135,17 +135,17 @@ export const Navigation = () => {
             </Button>
             <Button
               variant="ghost"
-              onClick={handleVideoClick}
-              className="w-full justify-start hover:text-primary"
-            >
-              Video Calculadoras
-            </Button>
-            <Button
-              variant="ghost"
               onClick={() => scrollToSection("casas")}
               className="w-full justify-start hover:text-primary"
             >
               Casas Regulamentadas
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleVideoClick}
+              className="w-full justify-start hover:text-primary"
+            >
+              Video Calculadoras
             </Button>
             <Button
               variant="ghost"

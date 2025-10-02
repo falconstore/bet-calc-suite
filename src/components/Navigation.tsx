@@ -20,7 +20,11 @@ export const Navigation = () => {
   };
 
   const handleBetbraClick = () => {
-    window.open("SEU_LINK_DE_INDICACAO_AQUI", "_blank");
+    window.open("https://betbra.bet.br/register/?affid=shark100", "_blank");
+  };
+
+  const handleVideoClick = () => {
+    window.open("https://www.youtube.com/watch?v=jRyoWL-plJ0&list=PLMxf7zH7RQEDdrP26qkavZC2o134fle2L", "_blank");
   };
 
   return (
@@ -71,6 +75,14 @@ export const Navigation = () => {
               Contato
             </Button>
             
+            <Button
+              variant="ghost"
+              onClick={handleVideoClick}
+              className="hover:text-primary"
+            >
+              Video Calculadoras
+            </Button>
+            
             {/* Separador */}
             <div className="w-px h-6 bg-border/50" />
             
@@ -80,10 +92,9 @@ export const Navigation = () => {
               variant="outline"
               className="relative border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group"
             >
-              <span className="flex items-center gap-2">
-                <Percent className="w-4 h-4 text-primary" />
-                <span className="font-semibold">2.8%</span>
-                <span className="text-muted-foreground">Betbra</span>
+              <span className="flex flex-col items-center gap-0 leading-tight">
+                <span className="font-semibold text-xs">Cadastro</span>
+                <span className="font-semibold">Betbra</span>
               </span>
               <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Button>
@@ -109,9 +120,10 @@ export const Navigation = () => {
               variant="outline"
               className="w-full border-primary/30 bg-primary/5 hover:bg-primary/10"
             >
-              <Percent className="w-4 h-4 mr-2 text-primary" />
-              <span className="font-semibold">2.8% Betbra</span>
-              <span className="text-xs text-muted-foreground ml-2">- Oferta Exclusiva</span>
+              <span className="flex flex-col items-center gap-0 leading-tight">
+                <span className="font-semibold text-xs">Cadastro Betbra</span>
+                <span className="text-xs text-muted-foreground">Oferta Exclusiva</span>
+              </span>
             </Button>
 
             <Button
@@ -120,6 +132,13 @@ export const Navigation = () => {
               className="w-full justify-start hover:text-primary"
             >
               Calculadoras
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleVideoClick}
+              className="w-full justify-start hover:text-primary"
+            >
+              Video Calculadoras
             </Button>
             <Button
               variant="ghost"

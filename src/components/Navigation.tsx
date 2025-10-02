@@ -88,11 +88,11 @@ export const Navigation = () => {
             {/* Botão Betbra Destacado */}
             <Button
               onClick={handleBetbraClick}
-              className="relative bg-success text-white hover:bg-success/90 shadow-lg hover:shadow-xl transition-all"
+              className="relative bg-[#00D9D9] text-black hover:bg-[#00C4C4] shadow-lg hover:shadow-xl transition-all font-bold"
             >
               <span className="flex flex-col items-center gap-0 leading-tight">
-                <span className="font-bold text-xs">Cadastro</span>
-                <span className="font-bold text-sm">Betbra</span>
+                <span className="text-xs">Cadastro</span>
+                <span className="text-sm">Betbra</span>
               </span>
             </Button>
           </div>
@@ -114,11 +114,11 @@ export const Navigation = () => {
             {/* Botão Betbra Mobile */}
             <Button
               onClick={handleBetbraClick}
-              className="w-full bg-success text-white hover:bg-success/90 shadow-lg mb-3"
+              className="w-full bg-[#00D9D9] text-black hover:bg-[#00C4C4] shadow-lg mb-3 font-bold"
             >
               <span className="flex flex-col items-center leading-tight">
-                <span className="font-bold text-sm">Cadastro Betbra</span>
-                <span className="text-xs opacity-90">Oferta Exclusiva</span>
+                <span className="text-sm">Cadastro Betbra</span>
+                <span className="text-xs opacity-70">Oferta Exclusiva</span>
               </span>
             </Button>
 

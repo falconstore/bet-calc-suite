@@ -459,6 +459,14 @@ export class ArbiPro {
 
     switch (action) {
       case "odd":
+        // Quando a odd é alterada, limpar o override de stake para recalcular automaticamente
+        if (this.manualOverrides[idx]) {
+          delete this.manualOverrides[idx].stake;
+          // Se não sobrou nenhum override, limpar o objeto todo
+          if (Object.keys(this.manualOverrides[idx]).length === 0) {
+            delete this.manualOverrides[idx];
+          }
+        }
         this.setHouse(idx, { odd: t.value });
         break;
       case "stake":
@@ -469,10 +477,24 @@ export class ArbiPro {
         break;
       case "commissionValue":
         const commVal = Utils.parseFlex(t.value);
+        // Limpar override de stake quando comissão é alterada
+        if (this.manualOverrides[idx]) {
+          delete this.manualOverrides[idx].stake;
+          if (Object.keys(this.manualOverrides[idx]).length === 0) {
+            delete this.manualOverrides[idx];
+          }
+        }
         this.setHouse(idx, { commission: Number.isFinite(commVal) ? commVal : 0 });
         break;
       case "increaseValue":
         const incVal = Utils.parseFlex(t.value);
+        // Limpar override de stake quando aumento de odd é alterado
+        if (this.manualOverrides[idx]) {
+          delete this.manualOverrides[idx].stake;
+          if (Object.keys(this.manualOverrides[idx]).length === 0) {
+            delete this.manualOverrides[idx];
+          }
+        }
         this.setHouse(idx, { increase: Number.isFinite(incVal) ? incVal : 0 });
         break;
     }

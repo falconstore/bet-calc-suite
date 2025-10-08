@@ -123,19 +123,23 @@ export class ArbiPro {
       }
 
       if (idx !== fixedIndex && h.finalOdd > 0 && !overrides.stake) {
-        const fixedCommission = fixed.commission || 0;
         const houseCommission = h.commission || 0;
-        const fixedProfit = fixedStake * fixedOdd * (1 - fixedCommission / 100);
+        
+        // O retorno bruto da casa fixa que precisa ser igualado
+        const fixedReturn = fixedStake * fixedOdd;
         
         let calcStake;
         if (h.lay) {
-          calcStake = fixedProfit / (h.finalOdd - houseCommission / 100);
+          // Para LAY, o cálculo é diferente
+          calcStake = fixedReturn / (h.finalOdd - houseCommission / 100);
         } else {
-          const eff = h.finalOdd * (1 - houseCommission / 100);
-          calcStake = fixedProfit / eff;
+          // Para BACK normal ou freebet, calculamos o stake necessário 
+          // para igualar o retorno da casa fixa
+          const effectiveOdd = h.finalOdd * (1 - houseCommission / 100);
+          calcStake = fixedReturn / effectiveOdd;
         }
         
-        let finalStakeStr = this.smartRoundStake(calcStake, fixedProfit, h.finalOdd, houseCommission);
+        let finalStakeStr = this.smartRoundStake(calcStake, fixedReturn, h.finalOdd, houseCommission);
         
         const finalStakeNum = Utils.parseFlex(finalStakeStr) || 0;
         const cur = Utils.parseFlex(h.stake) || 0;

@@ -131,34 +131,28 @@ export class ArbiPro {
         const fixedCommission = fixed.commission || 0;
         const houseCommission = h.commission || 0;
         
-        // Retorno bruto da casa fixa (o que ela paga se ganhar)
-        const fixedReturn = fixedStake * fixedOdd;
+        // Retorno da casa fixa após comissão
+        const fixedGrossReturn = fixedStake * fixedOdd;
+        const fixedGrossProfit = fixedGrossReturn - fixedStake;
+        const fixedCommAmount = fixedGrossProfit * (fixedCommission / 100);
+        const fixedNetReturn = fixedGrossReturn - fixedCommAmount;
         
-        // Para equilibrar, todas as casas devem pagar o mesmo valor quando ganham
-        // Precisamos calcular o stake que faz esta casa pagar o mesmo que a fixa
         let calcStake;
         
         if (h.lay) {
           // Para LAY o cálculo é diferente
-          calcStake = fixedReturn / (h.finalOdd - houseCommission / 100);
+          calcStake = fixedNetReturn / (h.finalOdd - houseCommission / 100);
         } else {
-          // Para BACK, o retorno líquido após comissão deve igualar o retorno da fixa
-          // fixedReturn = calcStake * h.finalOdd * (1 - houseCommission/100)
-          // Mas a comissão é sobre o GANHO, não sobre o retorno total
-          // Retorno = stake * odd
-          // Ganho = retorno - stake = stake * (odd - 1)
-          // Comissão = ganho * (commission/100) = stake * (odd - 1) * (commission/100)
-          // Retorno líquido = retorno - comissão = stake * odd - stake * (odd - 1) * (commission/100)
-          // Retorno líquido = stake * [odd - (odd - 1) * (commission/100)]
-          // Retorno líquido = stake * [odd - odd*comm/100 + comm/100]
-          // Retorno líquido = stake * [odd*(1 - comm/100) + comm/100]
-          
-          // Queremos: fixedReturn = stake * [odd*(1 - comm/100) + comm/100]
+          // Para BACK: queremos que o retorno líquido desta casa = retorno líquido da casa fixa
+          // fixedNetReturn = stake * odd - stake * (odd - 1) * (commission/100)
+          // fixedNetReturn = stake * [odd - (odd - 1) * commission/100]
+          // fixedNetReturn = stake * [odd - odd*commission/100 + commission/100]
+          // fixedNetReturn = stake * [odd * (1 - commission/100) + commission/100]
           const factor = h.finalOdd * (1 - houseCommission / 100) + (houseCommission / 100);
-          calcStake = fixedReturn / factor;
+          calcStake = fixedNetReturn / factor;
         }
         
-        let finalStakeStr = this.smartRoundStake(calcStake, fixedReturn, h.finalOdd, houseCommission);
+        let finalStakeStr = this.smartRoundStake(calcStake, fixedNetReturn, h.finalOdd, houseCommission);
         
         const finalStakeNum = Utils.parseFlex(finalStakeStr) || 0;
         const cur = Utils.parseFlex(h.stake) || 0;

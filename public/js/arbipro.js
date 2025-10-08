@@ -123,20 +123,35 @@ export class ArbiPro {
       }
 
       if (idx !== fixedIndex && h.finalOdd > 0 && !overrides.stake) {
+        // Calcular o stake necessário para equilibrar os lucros
+        const fixedCommission = fixed.commission || 0;
         const houseCommission = h.commission || 0;
         
-        // O retorno bruto da casa fixa que precisa ser igualado
+        // Retorno bruto da casa fixa (o que ela paga se ganhar)
         const fixedReturn = fixedStake * fixedOdd;
         
+        // Para equilibrar, todas as casas devem pagar o mesmo valor quando ganham
+        // Precisamos calcular o stake que faz esta casa pagar o mesmo que a fixa
         let calcStake;
+        
         if (h.lay) {
-          // Para LAY, o cálculo é diferente
+          // Para LAY o cálculo é diferente
           calcStake = fixedReturn / (h.finalOdd - houseCommission / 100);
         } else {
-          // Para BACK normal ou freebet, calculamos o stake necessário 
-          // para igualar o retorno da casa fixa
-          const effectiveOdd = h.finalOdd * (1 - houseCommission / 100);
-          calcStake = fixedReturn / effectiveOdd;
+          // Para BACK, o retorno líquido após comissão deve igualar o retorno da fixa
+          // fixedReturn = calcStake * h.finalOdd * (1 - houseCommission/100)
+          // Mas a comissão é sobre o GANHO, não sobre o retorno total
+          // Retorno = stake * odd
+          // Ganho = retorno - stake = stake * (odd - 1)
+          // Comissão = ganho * (commission/100) = stake * (odd - 1) * (commission/100)
+          // Retorno líquido = retorno - comissão = stake * odd - stake * (odd - 1) * (commission/100)
+          // Retorno líquido = stake * [odd - (odd - 1) * (commission/100)]
+          // Retorno líquido = stake * [odd - odd*comm/100 + comm/100]
+          // Retorno líquido = stake * [odd*(1 - comm/100) + comm/100]
+          
+          // Queremos: fixedReturn = stake * [odd*(1 - comm/100) + comm/100]
+          const factor = h.finalOdd * (1 - houseCommission / 100) + (houseCommission / 100);
+          calcStake = fixedReturn / factor;
         }
         
         let finalStakeStr = this.smartRoundStake(calcStake, fixedReturn, h.finalOdd, houseCommission);

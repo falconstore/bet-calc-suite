@@ -80,8 +80,12 @@ export class ArbiPro {
         const comm = gross > 0 ? (commission / 100) * gross : 0;
         profits[idx] = gross - comm;
       } else {
-        const effOdd = odd * (1 - commission / 100);
-        profits[idx] = stake * effOdd - totalStake;
+        // BACK normal: comissão é aplicada sobre o GANHO, não sobre o retorno total
+        const grossReturn = stake * odd; // Retorno bruto
+        const grossProfit = grossReturn - stake; // Ganho bruto (sem comissão)
+        const commissionAmount = grossProfit * (commission / 100); // Comissão sobre o ganho
+        const netReturn = grossReturn - commissionAmount; // Retorno líquido
+        profits[idx] = netReturn - totalStake; // Lucro final
       }
     });
 

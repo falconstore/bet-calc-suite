@@ -6,6 +6,7 @@ interface Scenario {
   result: string;
   resultClass: 'win' | 'lose' | 'draw';
   betOrProtection: 'Aposta' | 'Proteção';
+  hasAlert?: boolean; // Indica quando perde na aposta mas devolve na proteção
 }
 
 type HandicapType = 'asiatico' | 'europeu';
@@ -130,7 +131,8 @@ export const HandicapProtection = () => {
         description: `Vence por exatos ${goalDiff} gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
         result: '⚖ EMPATE (Devolvida)',
         resultClass: 'draw',
-        betOrProtection: 'Proteção'
+        betOrProtection: 'Proteção',
+        hasAlert: true // Perde na aposta, mas devolve na proteção
       });
       
       if (goalDiff > 1) {
@@ -318,7 +320,7 @@ export const HandicapProtection = () => {
                 {generateScenarios().map((scenario, idx) => (
                   <div 
                     key={idx}
-                    className="grid grid-cols-[1fr_auto_auto] gap-3 items-center py-2.5 border-b border-border last:border-b-0"
+                    className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center py-2.5 border-b border-border last:border-b-0"
                   >
                     <span className="text-sm text-foreground/90">{scenario.description}</span>
                     <span className={`font-semibold text-xs px-2 py-1 rounded whitespace-nowrap ${
@@ -337,6 +339,11 @@ export const HandicapProtection = () => {
                     }`}>
                       {scenario.result}
                     </span>
+                    {scenario.hasAlert && (
+                      <span className="text-warning text-lg" title="Perde na aposta, mas devolve na proteção">
+                        ⚠️
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>

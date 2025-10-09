@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Target, Info, TrendingUp, Globe } from "lucide-react";
+import { Target, Info, Globe } from "lucide-react";
 
 interface Scenario {
   description: string;
   result: string;
   resultClass: 'win' | 'lose' | 'draw';
-  betOrProtection: 'Aposta' | 'Proteção' | 'Ambas';
+  betOrProtection: 'Aposta' | 'Proteção';
 }
 
 type HandicapType = 'asiatico' | 'europeu';
@@ -79,14 +79,14 @@ export const HandicapProtection = () => {
           description: 'Vence por 1+ gol (ex: 1x0, 2x1, 3x0)',
           result: '✓ GANHA',
           resultClass: 'win',
-          betOrProtection: 'Ambas'
+          betOrProtection: 'Aposta'
         });
       } else {
         scenarios.push({
           description: `Vence por ${goalDiff}+ gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
           result: '✓ GANHA',
           resultClass: 'win',
-          betOrProtection: 'Ambas'
+          betOrProtection: 'Aposta'
         });
       }
       
@@ -123,7 +123,7 @@ export const HandicapProtection = () => {
         description: `Vence por ${goalDiff+1}+ gols (ex: ${goalDiff+1}x0, ${goalDiff+2}x1)`,
         result: '✓ GANHA',
         resultClass: 'win',
-        betOrProtection: 'Ambas'
+        betOrProtection: 'Aposta'
       });
       
       scenarios.push({
@@ -322,9 +322,7 @@ export const HandicapProtection = () => {
                   >
                     <span className="text-sm text-foreground/90">{scenario.description}</span>
                     <span className={`font-semibold text-xs px-2 py-1 rounded whitespace-nowrap ${
-                      scenario.betOrProtection === 'Ambas' 
-                        ? 'text-primary bg-primary/10 border border-primary/20' 
-                        : scenario.betOrProtection === 'Aposta'
+                      scenario.betOrProtection === 'Aposta'
                         ? 'text-success bg-success/10 border border-success/20'
                         : 'text-info bg-info/10 border border-info/20'
                     }`}>
@@ -345,38 +343,6 @@ export const HandicapProtection = () => {
             </div>
           </div>
         )}
-
-        {/* Common Bets Cards */}
-        <div className="bg-card border border-border/50 rounded-lg p-6">
-          <div className="text-center mb-5">
-            <div className="text-xl font-bold text-foreground flex items-center justify-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              APOSTAS MAIS COMUNS
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { type: 'win1', title: 'Ganhar por 1+ gol', handicap: '0.5' },
-              { type: 'win2', title: 'Ganhar por 2+ gols', handicap: '1.5' },
-              { type: 'win3', title: 'Ganhar por 3+ gols', handicap: '2.5' },
-              { type: 'win4', title: 'Ganhar por 4+ gols', handicap: '3.5' }
-            ].map((bet) => (
-              <div
-                key={bet.type}
-                onClick={() => selectBet(bet.type)}
-                className="bg-background border-2 border-border rounded-lg p-4 cursor-pointer transition-all hover:border-primary hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="font-bold text-foreground mb-1 text-sm">
-                  {bet.title}
-                </div>
-                <div className="text-success text-lg font-bold">
-                  → Handicap -{bet.handicap}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

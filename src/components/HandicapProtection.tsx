@@ -5,6 +5,7 @@ interface Scenario {
   description: string;
   result: string;
   resultClass: 'win' | 'lose' | 'draw';
+  betOrProtection: 'Aposta' | 'Proteção' | 'Ambas';
 }
 
 type HandicapType = 'asiatico' | 'europeu';
@@ -77,13 +78,15 @@ export const HandicapProtection = () => {
         scenarios.push({
           description: 'Vence por 1+ gol (ex: 1x0, 2x1, 3x0)',
           result: '✓ GANHA',
-          resultClass: 'win'
+          resultClass: 'win',
+          betOrProtection: 'Ambas'
         });
       } else {
         scenarios.push({
           description: `Vence por ${goalDiff}+ gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
           result: '✓ GANHA',
-          resultClass: 'win'
+          resultClass: 'win',
+          betOrProtection: 'Ambas'
         });
       }
       
@@ -96,33 +99,38 @@ export const HandicapProtection = () => {
         scenarios.push({
           description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
           result: '✗ PERDE',
-          resultClass: 'lose'
+          resultClass: 'lose',
+          betOrProtection: 'Proteção'
         });
       }
       
       scenarios.push({
         description: 'Empate (ex: 0x0, 1x1, 2x2)',
         result: '✗ PERDE',
-        resultClass: 'lose'
+        resultClass: 'lose',
+        betOrProtection: 'Proteção'
       });
       
       scenarios.push({
         description: 'Time perde (ex: 0x1, 1x2)',
         result: '✗ PERDE',
-        resultClass: 'lose'
+        resultClass: 'lose',
+        betOrProtection: 'Proteção'
       });
     } else {
       // Cenários para Handicap Europeu
       scenarios.push({
         description: `Vence por ${goalDiff+1}+ gols (ex: ${goalDiff+1}x0, ${goalDiff+2}x1)`,
         result: '✓ GANHA',
-        resultClass: 'win'
+        resultClass: 'win',
+        betOrProtection: 'Ambas'
       });
       
       scenarios.push({
         description: `Vence por exatos ${goalDiff} gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
         result: '⚖ EMPATE (Devolvida)',
-        resultClass: 'draw'
+        resultClass: 'draw',
+        betOrProtection: 'Proteção'
       });
       
       if (goalDiff > 1) {
@@ -133,20 +141,23 @@ export const HandicapProtection = () => {
         scenarios.push({
           description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
           result: '✗ PERDE',
-          resultClass: 'lose'
+          resultClass: 'lose',
+          betOrProtection: 'Proteção'
         });
       } else {
         scenarios.push({
           description: 'Empate (ex: 0x0, 1x1)',
           result: '✗ PERDE',
-          resultClass: 'lose'
+          resultClass: 'lose',
+          betOrProtection: 'Proteção'
         });
       }
       
       scenarios.push({
         description: 'Time perde (ex: 0x1, 1x2)',
         result: '✗ PERDE',
-        resultClass: 'lose'
+        resultClass: 'lose',
+        betOrProtection: 'Proteção'
       });
     }
     
@@ -307,10 +318,19 @@ export const HandicapProtection = () => {
                 {generateScenarios().map((scenario, idx) => (
                   <div 
                     key={idx}
-                    className="flex justify-between items-center py-2.5 border-b border-border last:border-b-0"
+                    className="grid grid-cols-[1fr_auto_auto] gap-3 items-center py-2.5 border-b border-border last:border-b-0"
                   >
                     <span className="text-sm text-foreground/90">{scenario.description}</span>
-                    <span className={`font-semibold text-sm px-3 py-1 rounded ${
+                    <span className={`font-semibold text-xs px-2 py-1 rounded whitespace-nowrap ${
+                      scenario.betOrProtection === 'Ambas' 
+                        ? 'text-primary bg-primary/10 border border-primary/20' 
+                        : scenario.betOrProtection === 'Aposta'
+                        ? 'text-success bg-success/10 border border-success/20'
+                        : 'text-info bg-info/10 border border-info/20'
+                    }`}>
+                      {scenario.betOrProtection}
+                    </span>
+                    <span className={`font-semibold text-sm px-3 py-1 rounded whitespace-nowrap ${
                       scenario.resultClass === 'win' 
                         ? 'text-success bg-success/10' 
                         : scenario.resultClass === 'draw'

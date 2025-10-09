@@ -1,23 +1,18 @@
 import { useState } from "react";
-import { Target, Info, Globe } from "lucide-react";
+import { Target, Info } from "lucide-react";
 
 interface Scenario {
   description: string;
   result: string;
-  resultClass: 'win' | 'lose' | 'draw';
+  resultClass: 'win' | 'lose';
   betOrProtection: 'Aposta' | 'Proteção';
-  hasAlert?: boolean; // Indica quando perde na aposta mas devolve na proteção
 }
-
-type HandicapType = 'asiatico' | 'europeu';
-
 export const HandicapProtection = () => {
   const [betType, setBetType] = useState("");
   const [customGoals, setCustomGoals] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [handicap, setHandicap] = useState(0);
   const [goalDiff, setGoalDiff] = useState(0);
-  const [handicapType, setHandicapType] = useState<HandicapType>('asiatico');
 
   const betMap: Record<string, number> = {
     'win1': 1,
@@ -57,8 +52,8 @@ export const HandicapProtection = () => {
     
     if (!diff) return;
     
-    // Asiático: diff - 0.5, Europeu: diff - 1
-    const calculatedHandicap = handicapType === 'asiatico' ? diff - 0.5 : diff - 1;
+    // Handicap Asiático: diff - 0.5
+    const calculatedHandicap = diff - 0.5;
     setHandicap(calculatedHandicap);
     setGoalDiff(diff);
     setShowResult(true);
@@ -73,95 +68,50 @@ export const HandicapProtection = () => {
   const generateScenarios = (): Scenario[] => {
     const scenarios: Scenario[] = [];
     
-    if (handicapType === 'asiatico') {
-      // Cenários para Handicap Asiático
-      if (goalDiff === 1) {
-        scenarios.push({
-          description: 'Vence por 1+ gol (ex: 1x0, 2x1, 3x0)',
-          result: '✓ GANHA',
-          resultClass: 'win',
-          betOrProtection: 'Aposta'
-        });
-      } else {
-        scenarios.push({
-          description: `Vence por ${goalDiff}+ gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
-          result: '✓ GANHA',
-          resultClass: 'win',
-          betOrProtection: 'Aposta'
-        });
-      }
-      
-      if (goalDiff > 1) {
-        const examples: string[] = [];
-        for (let i = 1; i < goalDiff; i++) {
-          examples.push(`${i}x0`);
-          if (i > 1) examples.push(`${i}x${i-1}`);
-        }
-        scenarios.push({
-          description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
-          result: '✗ PERDE',
-          resultClass: 'lose',
-          betOrProtection: 'Proteção'
-        });
-      }
-      
+    // Cenários para Handicap Asiático
+    if (goalDiff === 1) {
       scenarios.push({
-        description: 'Empate (ex: 0x0, 1x1, 2x2)',
-        result: '✗ PERDE',
-        resultClass: 'lose',
-        betOrProtection: 'Proteção'
-      });
-      
-      scenarios.push({
-        description: 'Time perde (ex: 0x1, 1x2)',
-        result: '✗ PERDE',
-        resultClass: 'lose',
-        betOrProtection: 'Proteção'
-      });
-    } else {
-      // Cenários para Handicap Europeu
-      scenarios.push({
-        description: `Vence por ${goalDiff+1}+ gols (ex: ${goalDiff+1}x0, ${goalDiff+2}x1)`,
+        description: 'Vence por 1+ gol (ex: 1x0, 2x1, 3x0)',
         result: '✓ GANHA',
         resultClass: 'win',
         betOrProtection: 'Aposta'
       });
-      
+    } else {
       scenarios.push({
-        description: `Vence por exatos ${goalDiff} gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
-        result: '⚖ EMPATE (Devolvida)',
-        resultClass: 'draw',
-        betOrProtection: 'Proteção',
-        hasAlert: true // Perde na aposta, mas devolve na proteção
+        description: `Vence por ${goalDiff}+ gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
+        result: '✓ GANHA',
+        resultClass: 'win',
+        betOrProtection: 'Aposta'
       });
-      
-      if (goalDiff > 1) {
-        const examples: string[] = [];
-        for (let i = 1; i < goalDiff; i++) {
-          examples.push(`${i}x0`);
-        }
-        scenarios.push({
-          description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
-          result: '✗ PERDE',
-          resultClass: 'lose',
-          betOrProtection: 'Proteção'
-        });
-      } else {
-        scenarios.push({
-          description: 'Empate (ex: 0x0, 1x1)',
-          result: '✗ PERDE',
-          resultClass: 'lose',
-          betOrProtection: 'Proteção'
-        });
+    }
+    
+    if (goalDiff > 1) {
+      const examples: string[] = [];
+      for (let i = 1; i < goalDiff; i++) {
+        examples.push(`${i}x0`);
+        if (i > 1) examples.push(`${i}x${i-1}`);
       }
-      
       scenarios.push({
-        description: 'Time perde (ex: 0x1, 1x2)',
+        description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
         result: '✗ PERDE',
         resultClass: 'lose',
         betOrProtection: 'Proteção'
       });
     }
+    
+    scenarios.push({
+      description: 'Empate (ex: 0x0, 1x1, 2x2)',
+      result: '✗ PERDE',
+      resultClass: 'lose',
+      betOrProtection: 'Proteção'
+    });
+    
+    scenarios.push({
+      description: 'Time perde (ex: 0x1, 1x2)',
+      result: '✗ PERDE',
+      resultClass: 'lose',
+      betOrProtection: 'Proteção'
+    });
     
     return scenarios;
   };
@@ -184,51 +134,6 @@ export const HandicapProtection = () => {
             <Info className="w-5 h-5 text-info mt-0.5 flex-shrink-0" />
             <div className="text-sm text-foreground">
               <strong>Como funciona:</strong> Quando você aposta em "Time ganhar por 2 ou mais gols", pode proteger essa aposta usando o Handicap Asiático correspondente. Esta ferramenta mostra exatamente qual handicap usar!
-            </div>
-          </div>
-        </div>
-
-        {/* Handicap Type Selector */}
-        <div className="bg-card border border-border/50 rounded-lg p-6">
-          <div className="space-y-3">
-            <label className="block font-bold text-foreground mb-3">
-              Tipo de Handicap:
-            </label>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={() => {
-                  setHandicapType('asiatico');
-                  if (showResult && goalDiff) {
-                    const calculatedHandicap = goalDiff - 0.5;
-                    setHandicap(calculatedHandicap);
-                  }
-                }}
-                className={`px-6 py-4 rounded-lg border-2 font-bold transition-all ${
-                  handicapType === 'asiatico'
-                    ? 'bg-gradient-to-r from-[hsl(var(--shark-gradient-start))] to-[hsl(var(--shark-gradient-end))] text-white border-transparent'
-                    : 'bg-background text-foreground border-border hover:border-primary'
-                }`}
-              >
-                <Target className="w-5 h-5 mx-auto mb-2" />
-                Handicap Asiático
-              </button>
-              <button
-                onClick={() => {
-                  setHandicapType('europeu');
-                  if (showResult && goalDiff) {
-                    const calculatedHandicap = goalDiff - 1;
-                    setHandicap(calculatedHandicap);
-                  }
-                }}
-                className={`px-6 py-4 rounded-lg border-2 font-bold transition-all ${
-                  handicapType === 'europeu'
-                    ? 'bg-gradient-to-r from-[hsl(var(--shark-gradient-start))] to-[hsl(var(--shark-gradient-end))] text-white border-transparent'
-                    : 'bg-background text-foreground border-border hover:border-primary'
-                }`}
-              >
-                <Globe className="w-5 h-5 mx-auto mb-2" />
-                Handicap Europeu
-              </button>
             </div>
           </div>
         </div>
@@ -283,10 +188,10 @@ export const HandicapProtection = () => {
               
               <div className="bg-background border-2 border-success rounded-lg p-6 mb-5">
                 <div className="text-5xl font-black text-success mb-2">
-                  -{handicapType === 'asiatico' ? handicap.toFixed(1) : handicap.toFixed(0)}
+                  -{handicap.toFixed(1)}
                 </div>
                 <div className="text-lg text-muted-foreground">
-                  Handicap {handicapType === 'asiatico' ? 'Asiático' : 'Europeu'} -{handicapType === 'asiatico' ? handicap.toFixed(1) : handicap.toFixed(0)}
+                  Handicap Asiático -{handicap.toFixed(1)}
                 </div>
               </div>
 
@@ -296,17 +201,8 @@ export const HandicapProtection = () => {
                   📋 Por que este handicap?
                 </div>
                 <div className="text-sm text-foreground leading-relaxed">
-                  {handicapType === 'asiatico' ? (
-                    <>
-                      Para proteger uma aposta de "<strong>ganhar por {goalDiff} ou mais gols</strong>", você deve usar o <strong>Handicap Asiático -{handicap.toFixed(1)}</strong>.<br/><br/>
-                      <strong>Como funciona:</strong> O time precisa vencer com {goalDiff}+ gols de diferença para você ganhar a aposta. Se ganhar com menos gols ou empatar/perder, você perde a aposta.
-                    </>
-                  ) : (
-                    <>
-                      Para proteger uma aposta de "<strong>ganhar por {goalDiff} ou mais gols</strong>", você deve usar o <strong>Handicap Europeu -{handicap.toFixed(0)}</strong>.<br/><br/>
-                      <strong>Como funciona:</strong> O time precisa vencer com {goalDiff+1}+ gols de diferença para você ganhar. Se vencer com exatos {goalDiff} gols, sua aposta é devolvida (empate). Se ganhar com menos gols ou empatar/perder, você perde.
-                    </>
-                  )}
+                  Para proteger uma aposta de "<strong>ganhar por {goalDiff} ou mais gols</strong>", você deve usar o <strong>Handicap Asiático -{handicap.toFixed(1)}</strong>.<br/><br/>
+                  <strong>Como funciona:</strong> O time precisa vencer com {goalDiff}+ gols de diferença para você ganhar a aposta. Se ganhar com menos gols ou empatar/perder, você perde a aposta.
                 </div>
               </div>
             </div>
@@ -320,7 +216,7 @@ export const HandicapProtection = () => {
                 {generateScenarios().map((scenario, idx) => (
                   <div 
                     key={idx}
-                    className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center py-2.5 border-b border-border last:border-b-0"
+                    className="grid grid-cols-[1fr_auto_auto] gap-3 items-center py-2.5 border-b border-border last:border-b-0"
                   >
                     <span className="text-sm text-foreground/90">{scenario.description}</span>
                     <span className={`font-semibold text-xs px-2 py-1 rounded whitespace-nowrap ${
@@ -333,17 +229,10 @@ export const HandicapProtection = () => {
                     <span className={`font-semibold text-sm px-3 py-1 rounded whitespace-nowrap ${
                       scenario.resultClass === 'win' 
                         ? 'text-success bg-success/10' 
-                        : scenario.resultClass === 'draw'
-                        ? 'text-info bg-info/10'
                         : 'text-destructive bg-destructive/10'
                     }`}>
                       {scenario.result}
                     </span>
-                    {scenario.hasAlert && (
-                      <span className="text-warning text-lg" title="Perde na aposta, mas devolve na proteção">
-                        ⚠️
-                      </span>
-                    )}
                   </div>
                 ))}
               </div>

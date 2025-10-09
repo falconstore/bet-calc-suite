@@ -101,47 +101,27 @@ export const HandicapEuropeanTable = () => {
 
       {/* Grid responsivo: mostra pares alinhados */}
       <div className="space-y-4 mb-8">
-        {/* Primeiro par: -1 e +1 */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <HandicapBox item={negativeHandicaps[0]} />
-          <HandicapBox item={positiveHandicaps[0]} />
-        </div>
+        {negativeHandicaps.map((negItem, idx) => {
+          const posItem = positiveHandicaps[idx];
+          return (
+            <div key={idx} className="grid md:grid-cols-2 gap-4">
+              <HandicapBox item={negItem} />
+              {posItem && <HandicapBox item={posItem} />}
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Segundo par: -2 e +2 */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <HandicapBox item={negativeHandicaps[1]} />
-          <HandicapBox item={positiveHandicaps[1]} />
-        </div>
-
-        {/* Handicap 0 - CENTRO */}
-        <div className="max-w-md mx-auto">
-          <HandicapBox item={{
-            value: "0",
-            results: [
-              { label: "Venceu", value: "Ganha", type: "win" },
-              { label: "Empatou", value: "Empate", type: "draw" },
-              { label: "Perdeu", value: "Perde", type: "lose" }
-            ]
-          }} />
-        </div>
-
-        {/* Terceiro par: -3 e +3 */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <HandicapBox item={negativeHandicaps[2]} />
-          <HandicapBox item={positiveHandicaps[2]} />
-        </div>
-
-        {/* Quarto par: -4 e +4 */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <HandicapBox item={negativeHandicaps[3]} />
-          <HandicapBox item={positiveHandicaps[3]} />
-        </div>
-
-        {/* Quinto par: -5 e +5 */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <HandicapBox item={negativeHandicaps[4]} />
-          <HandicapBox item={positiveHandicaps[4]} />
-        </div>
+      {/* Handicap 0 */}
+      <div className="max-w-md mx-auto mb-8">
+        <HandicapBox item={{
+          value: "0",
+          results: [
+            { label: "Venceu", value: "Ganha", type: "win" },
+            { label: "Empatou", value: "Empate", type: "draw" },
+            { label: "Perdeu", value: "Perde", type: "lose" }
+          ]
+        }} />
       </div>
 
       {/* Legenda */}

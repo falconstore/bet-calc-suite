@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Target, Info, TrendingUp } from "lucide-react";
+import { Target, Info, TrendingUp, Globe } from "lucide-react";
 
 interface Scenario {
   description: string;
   result: string;
-  resultClass: 'win' | 'lose';
+  resultClass: 'win' | 'lose' | 'draw';
 }
+
+type HandicapType = 'asiatico' | 'europeu';
 
 export const HandicapProtection = () => {
   const [betType, setBetType] = useState("");
@@ -13,6 +15,7 @@ export const HandicapProtection = () => {
   const [showResult, setShowResult] = useState(false);
   const [handicap, setHandicap] = useState(0);
   const [goalDiff, setGoalDiff] = useState(0);
+  const [handicapType, setHandicapType] = useState<HandicapType>('asiatico');
 
   const betMap: Record<string, number> = {
     'win1': 1,
@@ -52,7 +55,8 @@ export const HandicapProtection = () => {
     
     if (!diff) return;
     
-    const calculatedHandicap = diff - 0.5;
+    // Asiático: diff - 0.5, Europeu: diff - 1
+    const calculatedHandicap = handicapType === 'asiatico' ? diff - 0.5 : diff - 1;
     setHandicap(calculatedHandicap);
     setGoalDiff(diff);
     setShowResult(true);
@@ -67,44 +71,84 @@ export const HandicapProtection = () => {
   const generateScenarios = (): Scenario[] => {
     const scenarios: Scenario[] = [];
     
-    if (goalDiff === 1) {
+    if (handicapType === 'asiatico') {
+      // Cenários para Handicap Asiático
+      if (goalDiff === 1) {
+        scenarios.push({
+          description: 'Vence por 1+ gol (ex: 1x0, 2x1, 3x0)',
+          result: '✓ GANHA',
+          resultClass: 'win'
+        });
+      } else {
+        scenarios.push({
+          description: `Vence por ${goalDiff}+ gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
+          result: '✓ GANHA',
+          resultClass: 'win'
+        });
+      }
+      
+      if (goalDiff > 1) {
+        const examples: string[] = [];
+        for (let i = 1; i < goalDiff; i++) {
+          examples.push(`${i}x0`);
+          if (i > 1) examples.push(`${i}x${i-1}`);
+        }
+        scenarios.push({
+          description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
+          result: '✗ PERDE',
+          resultClass: 'lose'
+        });
+      }
+      
       scenarios.push({
-        description: 'Vence por 1+ gol (ex: 1x0, 2x1, 3x0)',
-        result: '✓ GANHA',
-        resultClass: 'win'
+        description: 'Empate (ex: 0x0, 1x1, 2x2)',
+        result: '✗ PERDE',
+        resultClass: 'lose'
+      });
+      
+      scenarios.push({
+        description: 'Time perde (ex: 0x1, 1x2)',
+        result: '✗ PERDE',
+        resultClass: 'lose'
       });
     } else {
+      // Cenários para Handicap Europeu
       scenarios.push({
-        description: `Vence por ${goalDiff}+ gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
+        description: `Vence por ${goalDiff+1}+ gols (ex: ${goalDiff+1}x0, ${goalDiff+2}x1)`,
         result: '✓ GANHA',
         resultClass: 'win'
       });
-    }
-    
-    if (goalDiff > 1) {
-      const examples: string[] = [];
-      for (let i = 1; i < goalDiff; i++) {
-        examples.push(`${i}x0`);
-        if (i > 1) examples.push(`${i}x${i-1}`);
-      }
+      
       scenarios.push({
-        description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
+        description: `Vence por exatos ${goalDiff} gols (ex: ${goalDiff}x0, ${goalDiff+1}x1)`,
+        result: '⚖ EMPATE (Devolvida)',
+        resultClass: 'draw'
+      });
+      
+      if (goalDiff > 1) {
+        const examples: string[] = [];
+        for (let i = 1; i < goalDiff; i++) {
+          examples.push(`${i}x0`);
+        }
+        scenarios.push({
+          description: `Vence por menos de ${goalDiff} gols (ex: ${examples.slice(0, 2).join(', ')})`,
+          result: '✗ PERDE',
+          resultClass: 'lose'
+        });
+      } else {
+        scenarios.push({
+          description: 'Empate (ex: 0x0, 1x1)',
+          result: '✗ PERDE',
+          resultClass: 'lose'
+        });
+      }
+      
+      scenarios.push({
+        description: 'Time perde (ex: 0x1, 1x2)',
         result: '✗ PERDE',
         resultClass: 'lose'
       });
     }
-    
-    scenarios.push({
-      description: 'Empate (ex: 0x0, 1x1, 2x2)',
-      result: '✗ PERDE',
-      resultClass: 'lose'
-    });
-    
-    scenarios.push({
-      description: 'Time perde (ex: 0x1, 1x2)',
-      result: '✗ PERDE',
-      resultClass: 'lose'
-    });
     
     return scenarios;
   };
@@ -113,7 +157,7 @@ export const HandicapProtection = () => {
     <div className="w-full animate-fade-in">
       <div className="text-center mb-8">
         <h2 className="text-3xl md:text-4xl font-black mb-3">
-          <span className="text-gradient">Proteção de Handicap Asiático</span>
+          <span className="text-gradient">Proteção de Handicap</span>
         </h2>
         <p className="text-lg text-muted-foreground font-semibold">
           Descubra qual handicap usar para proteger sua aposta de vitória por X gols
@@ -127,6 +171,51 @@ export const HandicapProtection = () => {
             <Info className="w-5 h-5 text-info mt-0.5 flex-shrink-0" />
             <div className="text-sm text-foreground">
               <strong>Como funciona:</strong> Quando você aposta em "Time ganhar por 2 ou mais gols", pode proteger essa aposta usando o Handicap Asiático correspondente. Esta ferramenta mostra exatamente qual handicap usar!
+            </div>
+          </div>
+        </div>
+
+        {/* Handicap Type Selector */}
+        <div className="bg-card border border-border/50 rounded-lg p-6">
+          <div className="space-y-3">
+            <label className="block font-bold text-foreground mb-3">
+              Tipo de Handicap:
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => {
+                  setHandicapType('asiatico');
+                  if (showResult && goalDiff) {
+                    const calculatedHandicap = goalDiff - 0.5;
+                    setHandicap(calculatedHandicap);
+                  }
+                }}
+                className={`px-6 py-4 rounded-lg border-2 font-bold transition-all ${
+                  handicapType === 'asiatico'
+                    ? 'bg-gradient-to-r from-[hsl(var(--shark-gradient-start))] to-[hsl(var(--shark-gradient-end))] text-white border-transparent'
+                    : 'bg-background text-foreground border-border hover:border-primary'
+                }`}
+              >
+                <Target className="w-5 h-5 mx-auto mb-2" />
+                Handicap Asiático
+              </button>
+              <button
+                onClick={() => {
+                  setHandicapType('europeu');
+                  if (showResult && goalDiff) {
+                    const calculatedHandicap = goalDiff - 1;
+                    setHandicap(calculatedHandicap);
+                  }
+                }}
+                className={`px-6 py-4 rounded-lg border-2 font-bold transition-all ${
+                  handicapType === 'europeu'
+                    ? 'bg-gradient-to-r from-[hsl(var(--shark-gradient-start))] to-[hsl(var(--shark-gradient-end))] text-white border-transparent'
+                    : 'bg-background text-foreground border-border hover:border-primary'
+                }`}
+              >
+                <Globe className="w-5 h-5 mx-auto mb-2" />
+                Handicap Europeu
+              </button>
             </div>
           </div>
         </div>
@@ -181,10 +270,10 @@ export const HandicapProtection = () => {
               
               <div className="bg-background border-2 border-success rounded-lg p-6 mb-5">
                 <div className="text-5xl font-black text-success mb-2">
-                  -{handicap.toFixed(1)}
+                  -{handicapType === 'asiatico' ? handicap.toFixed(1) : handicap.toFixed(0)}
                 </div>
                 <div className="text-lg text-muted-foreground">
-                  Handicap Asiático -{handicap.toFixed(1)}
+                  Handicap {handicapType === 'asiatico' ? 'Asiático' : 'Europeu'} -{handicapType === 'asiatico' ? handicap.toFixed(1) : handicap.toFixed(0)}
                 </div>
               </div>
 
@@ -194,8 +283,17 @@ export const HandicapProtection = () => {
                   📋 Por que este handicap?
                 </div>
                 <div className="text-sm text-foreground leading-relaxed">
-                  Para proteger uma aposta de "<strong>ganhar por {goalDiff} ou mais gols</strong>", você deve usar o <strong>Handicap -{handicap.toFixed(1)}</strong>.<br/><br/>
-                  <strong>Como funciona:</strong> O time precisa vencer com {goalDiff}+ gols de diferença para você ganhar a aposta. Se ganhar com menos gols ou empatar/perder, você perde a aposta.
+                  {handicapType === 'asiatico' ? (
+                    <>
+                      Para proteger uma aposta de "<strong>ganhar por {goalDiff} ou mais gols</strong>", você deve usar o <strong>Handicap Asiático -{handicap.toFixed(1)}</strong>.<br/><br/>
+                      <strong>Como funciona:</strong> O time precisa vencer com {goalDiff}+ gols de diferença para você ganhar a aposta. Se ganhar com menos gols ou empatar/perder, você perde a aposta.
+                    </>
+                  ) : (
+                    <>
+                      Para proteger uma aposta de "<strong>ganhar por {goalDiff} ou mais gols</strong>", você deve usar o <strong>Handicap Europeu -{handicap.toFixed(0)}</strong>.<br/><br/>
+                      <strong>Como funciona:</strong> O time precisa vencer com {goalDiff+1}+ gols de diferença para você ganhar. Se vencer com exatos {goalDiff} gols, sua aposta é devolvida (empate). Se ganhar com menos gols ou empatar/perder, você perde.
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -215,6 +313,8 @@ export const HandicapProtection = () => {
                     <span className={`font-semibold text-sm px-3 py-1 rounded ${
                       scenario.resultClass === 'win' 
                         ? 'text-success bg-success/10' 
+                        : scenario.resultClass === 'draw'
+                        ? 'text-info bg-info/10'
                         : 'text-destructive bg-destructive/10'
                     }`}>
                       {scenario.result}

@@ -80,7 +80,8 @@ const negativeHandicaps: HandicapItem[] = [
   { value: "-2.0/-2.5", subtitle: "-2.25", results: [
     { label: "Venceu por 3 ou +", value: "Ganha", type: "win" },
     { label: "Venceu por 2", value: "1/2 Perdida", type: "partial" },
-    { label: "Venceu por 1 ou menos", value: "Perde", type: "lose" }
+    { label: "Venceu por 1", value: "Perde", type: "lose" },
+    { label: "Perdeu/Empatou", value: "Perde", type: "lose" }
   ]},
   { value: "-2.5", results: [
     { label: "Venceu por 3 ou +", value: "Ganha", type: "win" },

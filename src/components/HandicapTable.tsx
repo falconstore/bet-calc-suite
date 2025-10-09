@@ -248,30 +248,17 @@ export const HandicapTable = () => {
         <p className="text-lg text-muted-foreground font-semibold">NEGATIVO x POSITIVO</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        {/* Coluna Negativa */}
-        <div>
-          <h3 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-destructive to-destructive/70 text-white py-3 rounded-lg">
-            HANDICAP NEGATIVO
-          </h3>
-          <div className="space-y-4">
-            {negativeHandicaps.map((item, idx) => (
-              <HandicapBox key={idx} item={item} />
-            ))}
-          </div>
-        </div>
-
-        {/* Coluna Positiva */}
-        <div>
-          <h3 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-success to-success/70 text-white py-3 rounded-lg">
-            HANDICAP POSITIVO
-          </h3>
-          <div className="space-y-4">
-            {positiveHandicaps.map((item, idx) => (
-              <HandicapBox key={idx} item={item} />
-            ))}
-          </div>
-        </div>
+      {/* Grid responsivo: mostra pares alinhados */}
+      <div className="space-y-4 mb-8">
+        {negativeHandicaps.map((negItem, idx) => {
+          const posItem = positiveHandicaps[idx];
+          return (
+            <div key={idx} className="grid md:grid-cols-2 gap-4">
+              <HandicapBox item={negItem} />
+              {posItem && <HandicapBox item={posItem} />}
+            </div>
+          );
+        })}
       </div>
 
       {/* Handicap 0 */}

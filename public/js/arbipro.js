@@ -131,28 +131,25 @@ export class ArbiPro {
         const fixedCommission = fixed.commission || 0;
         const houseCommission = h.commission || 0;
         
-        // Retorno da casa fixa após comissão
-        const fixedGrossReturn = fixedStake * fixedOdd;
-        const fixedGrossProfit = fixedGrossReturn - fixedStake;
-        const fixedCommAmount = fixedGrossProfit * (fixedCommission / 100);
-        const fixedNetReturn = fixedGrossReturn - fixedCommAmount;
-        
         let calcStake;
         
         if (h.lay) {
-          // Para LAY o cálculo é diferente
-          calcStake = fixedNetReturn / (h.finalOdd - houseCommission / 100);
+          // Para LAY: calcular responsabilidade que equilibra o lucro
+          const resp = fixedStake * (fixedOdd - 1) / (1 - houseCommission / 100);
+          calcStake = resp / (h.finalOdd - 1);
+        } else if (h.freebet) {
+          // Para FREEBET: stake = (fixedStake * fixedOdd) / (h.finalOdd - 1)
+          calcStake = (fixedStake * fixedOdd) / (h.finalOdd - 1);
         } else {
-          // Para BACK: queremos que o retorno líquido desta casa = retorno líquido da casa fixa
-          // fixedNetReturn = stake * odd - stake * (odd - 1) * (commission/100)
-          // fixedNetReturn = stake * [odd - (odd - 1) * commission/100]
-          // fixedNetReturn = stake * [odd - odd*commission/100 + commission/100]
-          // fixedNetReturn = stake * [odd * (1 - commission/100) + commission/100]
-          const factor = h.finalOdd * (1 - houseCommission / 100) + (houseCommission / 100);
-          calcStake = fixedNetReturn / factor;
+          // Para BACK normal: calcular stake que equilibra o lucro
+          // Fórmula correta para balanceamento:
+          // stake = (fixedStake * fixedOdd * (1 - fixedComm/100)) / (h.finalOdd * (1 - houseComm/100))
+          const fixedEffOdd = fixedOdd * (1 - fixedCommission / 100);
+          const houseEffOdd = h.finalOdd * (1 - houseCommission / 100);
+          calcStake = (fixedStake * fixedEffOdd) / houseEffOdd;
         }
         
-        let finalStakeStr = this.smartRoundStake(calcStake, fixedNetReturn, h.finalOdd, houseCommission);
+        let finalStakeStr = this.smartRoundStake(calcStake, fixedStake * fixedOdd, h.finalOdd, houseCommission);
         
         const finalStakeNum = Utils.parseFlex(finalStakeStr) || 0;
         const cur = Utils.parseFlex(h.stake) || 0;

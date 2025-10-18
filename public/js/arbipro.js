@@ -140,9 +140,9 @@ export class ArbiPro {
           // Odds e comissões iguais = stakes EXATAMENTE iguais
           calcStake = fixedStake;
         } else if (h.lay) {
-          const fixedProfit = fixedStake * (fixed.finalOdd * (1 - fixedCommission / 100) - 1);
-          const factor = 2 - houseCommission / 100 - h.finalOdd;
-          calcStake = fixedProfit / factor;
+          const fixedNetOdd = fixed.finalOdd - (fixed.finalOdd - 1) * (fixedCommission / 100);
+          const houseNetOdd = h.finalOdd - (h.finalOdd - 1) * (houseCommission / 100);
+          calcStake = (fixedStake * fixedNetOdd) / houseNetOdd;
         } else if (h.freebet) {
           const fixedReturn = fixedStake * fixed.finalOdd * (1 - fixedCommission / 100);
           calcStake = fixedReturn / (h.finalOdd * (1 - houseCommission / 100));

@@ -196,34 +196,23 @@ export class ArbiPro {
     if (!Number.isFinite(num)) return Utils.formatDecimal(num);
     
     const step = this.roundingValue;
-    const baseRounded = Math.round(num / step) * step;
     
-    const options = [
-      Math.max(0, baseRounded - step),
-      baseRounded,
-      baseRounded + step
-    ];
+    // Arredondamento tradicional: 0.01-0.50 para baixo, 0.51-0.99 para cima
+    const remainder = num % step;
+    let rounded;
     
-    let bestOption = baseRounded;
-    let bestScore = -Infinity;
+    if (remainder <= step / 2) {
+      // Arredondar para baixo
+      rounded = num - remainder;
+    } else {
+      // Arredondar para cima
+      rounded = num - remainder + step;
+    }
     
-    options.forEach(option => {
-      if (option <= 0) return;
-      
-      const effOdd = odd * (1 - commission / 100);
-      const profit = option * effOdd - targetProfit;
-      
-      let score = profit;
-      if (profit > 0) score += 100;
-      score -= Math.abs(option - num) * 10;
-      
-      if (score > bestScore) {
-        bestScore = score;
-        bestOption = option;
-      }
-    });
+    // Garantir que não seja negativo
+    rounded = Math.max(0, rounded);
     
-    return Utils.formatDecimal(bestOption);
+    return Utils.formatDecimal(rounded);
   }
 
   // Interface

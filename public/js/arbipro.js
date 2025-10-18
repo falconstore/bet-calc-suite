@@ -140,9 +140,10 @@ export class ArbiPro {
           // Odds e comissões iguais = stakes EXATAMENTE iguais
           calcStake = fixedStake;
         } else if (h.lay) {
-          const fixedNetOdd = fixed.finalOdd - (fixed.finalOdd - 1) * (fixedCommission / 100);
-          const houseNetOdd = h.finalOdd - (h.finalOdd - 1) * (houseCommission / 100);
-          calcStake = (fixedStake * fixedNetOdd) / houseNetOdd;
+          // Fórmula LAY: igualar retorno líquido da aposta fixa com o ganho na LAY
+          const fixedReturn = fixedStake * fixed.finalOdd * (1 - fixedCommission / 100);
+          const layOddNet = h.finalOdd - (h.finalOdd - 1) * (houseCommission / 100);
+          calcStake = (fixedReturn - fixedStake) / (layOddNet - 1);
         } else if (h.freebet) {
           const fixedReturn = fixedStake * fixed.finalOdd * (1 - fixedCommission / 100);
           calcStake = fixedReturn / (h.finalOdd * (1 - houseCommission / 100));

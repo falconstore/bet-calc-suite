@@ -130,35 +130,35 @@ export class ArbiPro {
         const fixedCommission = Utils.parseFlex(fixed.commission) || 0;
         const houseCommission = Utils.parseFlex(h.commission) || 0;
         
-        let calcStake;
-        
         // Verificar se odds e comissões são iguais
-        const oddsIguais = Math.abs(fixed.finalOdd - h.finalOdd) < 0.001;
-        const commissoesIguais = Math.abs(fixedCommission - houseCommission) < 0.001;
+        const oddsIguais = Math.abs(fixed.finalOdd - h.finalOdd) < 0.01;
+        const commissoesIguais = Math.abs(fixedCommission - houseCommission) < 0.01;
+        const tiposIguais = !h.lay && !h.freebet && !fixed.lay && !fixed.freebet;
         
-        if (oddsIguais && commissoesIguais && !h.lay && !h.freebet && !fixed.lay && !fixed.freebet) {
-          // Odds e comissões iguais = stakes EXATAMENTE iguais (mesmo após arredondamento)
-          calcStake = fixedStake;
-        } else if (h.lay) {
-          const fixedProfit = fixedStake * (fixed.finalOdd * (1 - fixedCommission / 100) - 1);
-          const factor = 2 - houseCommission / 100 - h.finalOdd;
-          calcStake = fixedProfit / factor;
-        } else if (h.freebet) {
-          const fixedReturn = fixedStake * fixed.finalOdd * (1 - fixedCommission / 100);
-          calcStake = fixedReturn / (h.finalOdd * (1 - houseCommission / 100));
-        } else {
-          // BACK normal
-          const fixedNetOdd = fixed.finalOdd - (fixed.finalOdd - 1) * (fixedCommission / 100);
-          const houseNetOdd = h.finalOdd - (h.finalOdd - 1) * (houseCommission / 100);
-          calcStake = (fixedStake * fixedNetOdd) / houseNetOdd;
-        }
-        
-        // CRÍTICO: Se odds e comissões são iguais, usar EXATAMENTE o mesmo stake da casa fixa
         let finalStakeStr;
-        if (oddsIguais && commissoesIguais && !h.lay && !h.freebet && !fixed.lay && !fixed.freebet) {
-          // Usar exatamente o mesmo valor (já arredondado) da casa fixa
-          finalStakeStr = fixed.stake;
+        
+        // Se odds, comissões e tipos são iguais, copiar EXATAMENTE o stake fixado
+        if (oddsIguais && commissoesIguais && tiposIguais) {
+          finalStakeStr = fixed.stake; // Copia o valor exato como string
+          console.log(`Casa ${idx+1}: Odds iguais (${h.finalOdd} = ${fixed.finalOdd}), copiando stake: ${finalStakeStr}`);
         } else {
+          // Calcular stake baseado na fórmula
+          let calcStake;
+          
+          if (h.lay) {
+            const fixedProfit = fixedStake * (fixed.finalOdd * (1 - fixedCommission / 100) - 1);
+            const factor = 2 - houseCommission / 100 - h.finalOdd;
+            calcStake = fixedProfit / factor;
+          } else if (h.freebet) {
+            const fixedReturn = fixedStake * fixed.finalOdd * (1 - fixedCommission / 100);
+            calcStake = fixedReturn / (h.finalOdd * (1 - houseCommission / 100));
+          } else {
+            // BACK normal
+            const fixedNetOdd = fixed.finalOdd - (fixed.finalOdd - 1) * (fixedCommission / 100);
+            const houseNetOdd = h.finalOdd - (h.finalOdd - 1) * (houseCommission / 100);
+            calcStake = (fixedStake * fixedNetOdd) / houseNetOdd;
+          }
+          
           finalStakeStr = this.smartRoundStake(calcStake, fixedStake * fixed.finalOdd, h.finalOdd, houseCommission);
         }
         
@@ -182,7 +182,6 @@ export class ArbiPro {
             };
           }
         }
-      }
       }
     });
 

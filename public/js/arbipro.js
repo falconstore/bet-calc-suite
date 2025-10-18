@@ -127,26 +127,22 @@ export class ArbiPro {
       }
 
       if (idx !== fixedIndex && h.finalOdd > 0 && !overrides.stake) {
-        // Calcular o stake necessário para equilibrar os lucros
-        const fixedCommission = fixed.commission || 0;
-        const houseCommission = h.commission || 0;
+        // Fórmula de balanceamento correta baseada na calculadora de referência
+        const fixedCommission = Utils.parseFlex(fixed.commission) || 0;
+        const houseCommission = Utils.parseFlex(h.commission) || 0;
         
         let calcStake;
         
         if (h.lay) {
-          // Para LAY: calcular responsabilidade que equilibra o lucro
-          const resp = fixedStake * (fixedOdd - 1) / (1 - houseCommission / 100);
-          calcStake = resp / (h.finalOdd - 1);
+          // Para LAY: stake = (fixedStake * fixedOdd) / h.finalOdd
+          calcStake = (fixedStake * fixedOdd) / h.finalOdd;
         } else if (h.freebet) {
           // Para FREEBET: stake = (fixedStake * fixedOdd) / (h.finalOdd - 1)
           calcStake = (fixedStake * fixedOdd) / (h.finalOdd - 1);
         } else {
-          // Para BACK normal: calcular stake que equilibra o lucro
-          // Fórmula correta para balanceamento:
-          // stake = (fixedStake * fixedOdd * (1 - fixedComm/100)) / (h.finalOdd * (1 - houseComm/100))
-          const fixedEffOdd = fixedOdd * (1 - fixedCommission / 100);
-          const houseEffOdd = h.finalOdd * (1 - houseCommission / 100);
-          calcStake = (fixedStake * fixedEffOdd) / houseEffOdd;
+          // Para BACK normal: stake = (fixedStake * fixedOdd) / h.finalOdd
+          // Considerando comissão na odd efetiva (já calculada em finalOdd)
+          calcStake = (fixedStake * fixedOdd) / h.finalOdd;
         }
         
         let finalStakeStr = this.smartRoundStake(calcStake, fixedStake * fixedOdd, h.finalOdd, houseCommission);

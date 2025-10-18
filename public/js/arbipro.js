@@ -182,7 +182,6 @@ export class ArbiPro {
           }
         }
       }
-      }
     });
 
     if (changed) {

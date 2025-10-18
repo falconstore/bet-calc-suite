@@ -197,16 +197,19 @@ export class ArbiPro {
     
     const step = this.roundingValue;
     
-    // Arredondamento tradicional: 0.01-0.50 para baixo, 0.51-0.99 para cima
-    const remainder = num % step;
+    // Calcular o piso (arredondamento para baixo)
+    const floor = Math.floor(num / step) * step;
+    // Calcular o decimal restante
+    const decimal = num - floor;
+    
     let rounded;
     
-    if (remainder <= step / 2) {
-      // Arredondar para baixo
-      rounded = num - remainder;
+    // Se o decimal for <= 0.50 do step, arredondar para baixo
+    // Se o decimal for > 0.50 do step, arredondar para cima
+    if (decimal <= step * 0.5) {
+      rounded = floor;
     } else {
-      // Arredondar para cima
-      rounded = num - remainder + step;
+      rounded = floor + step;
     }
     
     // Garantir que não seja negativo

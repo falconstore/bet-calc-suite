@@ -127,37 +127,39 @@ export class ArbiPro {
       }
 
       if (idx !== fixedIndex && h.finalOdd > 0 && !overrides.stake) {
-        // Fórmula de balanceamento correta: igualar o lucro líquido
         const fixedCommission = Utils.parseFlex(fixed.commission) || 0;
         const houseCommission = Utils.parseFlex(h.commission) || 0;
         
         let calcStake;
         
-        if (h.lay) {
-          // Para LAY: stake vencedor * (1 - comm/100) - responsabilidade = fixedStake * fixedOdd * (1 - fixedComm/100) - fixedStake
-          // Simplificando: stake * (1 - comm/100) - stake * (odd - 1) = fixedStake * [fixedOdd * (1 - fixedComm/100) - 1]
-          const fixedProfit = fixedStake * (fixedOdd * (1 - fixedCommission / 100) - 1);
-          // stake * (1 - comm/100) - stake * (odd - 1) = fixedProfit
-          // stake * [(1 - comm/100) - (odd - 1)] = fixedProfit
-          // stake * [2 - comm/100 - odd] = fixedProfit
+        // Verificar se odds e comissões são iguais - se sim, stake deve ser EXATAMENTE igual
+        const oddsIguais = Math.abs(fixed.finalOdd - h.finalOdd) < 0.001;
+        const commissoesIguais = Math.abs(fixedCommission - houseCommission) < 0.001;
+        
+        if (oddsIguais && commissoesIguais && !h.lay && !h.freebet) {
+          // Odds e comissões iguais = stakes EXATAMENTE iguais
+          calcStake = fixedStake;
+        } else if (h.lay) {
+          const fixedProfit = fixedStake * (fixed.finalOdd * (1 - fixedCommission / 100) - 1);
           const factor = 2 - houseCommission / 100 - h.finalOdd;
           calcStake = fixedProfit / factor;
         } else if (h.freebet) {
-          // Para FREEBET: stake * odd * (1 - comm/100) = fixedStake * fixedOdd * (1 - fixedComm/100)
-          const fixedReturn = fixedStake * fixedOdd * (1 - fixedCommission / 100);
+          const fixedReturn = fixedStake * fixed.finalOdd * (1 - fixedCommission / 100);
           calcStake = fixedReturn / (h.finalOdd * (1 - houseCommission / 100));
         } else {
-          // Para BACK normal: lucro = stake * odd * (1 - comm sobre ganho) - totalStake
-          // O lucro líquido deve ser igual em todas as casas
-          // stake * odd - stake * (odd - 1) * comm/100 - totalStake = fixedStake * fixedOdd - fixedStake * (fixedOdd - 1) * fixedComm/100 - totalStake
-          // Simplificando (totalStake cancela):
-          // stake * [odd - (odd - 1) * comm/100] = fixedStake * [fixedOdd - (fixedOdd - 1) * fixedComm/100]
-          const fixedNetOdd = fixedOdd - (fixedOdd - 1) * (fixedCommission / 100);
+          // BACK normal
+          const fixedNetOdd = fixed.finalOdd - (fixed.finalOdd - 1) * (fixedCommission / 100);
           const houseNetOdd = h.finalOdd - (h.finalOdd - 1) * (houseCommission / 100);
           calcStake = (fixedStake * fixedNetOdd) / houseNetOdd;
         }
         
-        let finalStakeStr = this.smartRoundStake(calcStake, fixedStake * fixedOdd, h.finalOdd, houseCommission);
+        // Se odds e comissões são iguais, NÃO arredondar - usar valor exato
+        let finalStakeStr;
+        if (oddsIguais && commissoesIguais && !h.lay && !h.freebet) {
+          finalStakeStr = fixed.stake; // Usar exatamente o mesmo valor string
+        } else {
+          finalStakeStr = this.smartRoundStake(calcStake, fixedStake * fixed.finalOdd, h.finalOdd, houseCommission);
+        }
         
         const finalStakeNum = Utils.parseFlex(finalStakeStr) || 0;
         const cur = Utils.parseFlex(h.stake) || 0;
@@ -179,6 +181,7 @@ export class ArbiPro {
             };
           }
         }
+      }
       }
     });
 

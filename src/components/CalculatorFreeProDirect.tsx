@@ -932,17 +932,17 @@ export const CalculatorFreeProDirect = () => {
         <div className="card relative">
           {/* Marca d'água */}
           <div 
-            className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden"
-            style={{ zIndex: 1 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{ zIndex: 0 }}
           >
             <img 
               src={sharkWatermark} 
               alt="Shark Watermark" 
-              className="opacity-[0.15] max-w-[70%] max-h-[70%] object-contain"
+              className="opacity-[0.08] max-w-[60%] max-h-[60%] object-contain"
             />
           </div>
           
-          <div className="relative" style={{ zIndex: 2 }}>
+          <div className="relative" style={{ zIndex: 1 }}>
             <div className="section-title">Resultados Shark FreePro</div>
           
           <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>

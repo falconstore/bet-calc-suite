@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Link, Trash2, Loader2 } from "lucide-react";
-import sharkWatermark from "@/assets/shark-watermark.png";
 
 interface House {
   odd: string;
@@ -588,21 +587,8 @@ export const CalculatorArbiProDirect = () => {
 
       {/* Resultados */}
       {results.profits.length > 0 && (
-        <div className="card relative">
-          {/* Marca d'água */}
-          <div 
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            style={{ zIndex: 0 }}
-          >
-            <img 
-              src={sharkWatermark} 
-              alt="Shark Watermark" 
-              className="opacity-[0.08] max-w-[60%] max-h-[60%] object-contain"
-            />
-          </div>
-          
-          <div className="relative" style={{ zIndex: 1 }}>
-            <div className="section-title">Resultados Shark ArbiPro</div>
+        <div className="card">
+          <div className="section-title">Resultados Shark ArbiPro</div>
           
           <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
             <div className="stat-card">
@@ -652,7 +638,6 @@ export const CalculatorArbiProDirect = () => {
                 ))}
               </tbody>
             </table>
-          </div>
           </div>
         </div>
       )}

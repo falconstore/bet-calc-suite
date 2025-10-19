@@ -650,40 +650,33 @@ export const CalculatorFreeProDirect = () => {
       {/* Casa Promoção */}
       {mode === 'freebet' && (
         <div className="card mb-6">
-          <div 
-            className="section-title cursor-pointer hover:opacity-80 transition-opacity select-none"
-            onClick={() => {
-              if (editingName === 0) {
-                setEditingName(null);
-              } else {
-                setEditingName(0);
-              }
-            }}
-            title="Clique para editar o nome"
-          >
-            {editingName === 0 ? (
-              <input
-                type="text"
-                value={houseNames[0]}
-                onChange={(e) => {
-                  const newNames = [...houseNames];
-                  newNames[0] = e.target.value;
-                  setHouseNames(newNames);
-                }}
-                onBlur={() => setEditingName(null)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setEditingName(null);
-                  }
-                }}
-                autoFocus
-                className="bg-transparent border-b-2 border-[hsl(var(--shark-gradient-start))] outline-none w-full"
-                style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
-              />
-            ) : (
-              `${houseNames[0]} (Freebet)`
-            )}
-          </div>
+          {editingName === 0 ? (
+            <input
+              type="text"
+              value={houseNames[0]}
+              onChange={(e) => {
+                const newNames = [...houseNames];
+                newNames[0] = e.target.value;
+                setHouseNames(newNames);
+              }}
+              onBlur={() => setEditingName(null)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setEditingName(null);
+                }
+              }}
+              autoFocus
+              className="section-title bg-transparent border-b-2 border-[hsl(var(--shark-gradient-start))] outline-none w-full mb-4"
+            />
+          ) : (
+            <div 
+              className="section-title cursor-pointer hover:opacity-80 transition-opacity mb-4"
+              onClick={() => setEditingName(0)}
+              title="Clique para editar o nome"
+            >
+              {houseNames[0]} (Freebet)
+            </div>
+          )}
           
           <div className="grid-2 mb-4">
             <div className="form-group">
@@ -747,40 +740,33 @@ export const CalculatorFreeProDirect = () => {
       {/* Casa Promoção - Cashback */}
       {mode === 'cashback' && (
         <div className="card mb-6">
-          <div 
-            className="section-title cursor-pointer hover:opacity-80 transition-opacity select-none"
-            onClick={() => {
-              if (editingName === 0) {
-                setEditingName(null);
-              } else {
-                setEditingName(0);
-              }
-            }}
-            title="Clique para editar o nome"
-          >
-            {editingName === 0 ? (
-              <input
-                type="text"
-                value={houseNames[0]}
-                onChange={(e) => {
-                  const newNames = [...houseNames];
-                  newNames[0] = e.target.value;
-                  setHouseNames(newNames);
-                }}
-                onBlur={() => setEditingName(null)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setEditingName(null);
-                  }
-                }}
-                autoFocus
-                className="bg-transparent border-b-2 border-[hsl(var(--shark-gradient-start))] outline-none w-full"
-                style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
-              />
-            ) : (
-              `${houseNames[0]} (Cashback)`
-            )}
-          </div>
+          {editingName === 0 ? (
+            <input
+              type="text"
+              value={houseNames[0]}
+              onChange={(e) => {
+                const newNames = [...houseNames];
+                newNames[0] = e.target.value;
+                setHouseNames(newNames);
+              }}
+              onBlur={() => setEditingName(null)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setEditingName(null);
+                }
+              }}
+              autoFocus
+              className="section-title bg-transparent border-b-2 border-[hsl(var(--shark-gradient-start))] outline-none w-full mb-4"
+            />
+          ) : (
+            <div 
+              className="section-title cursor-pointer hover:opacity-80 transition-opacity mb-4"
+              onClick={() => setEditingName(0)}
+              title="Clique para editar o nome"
+            >
+              {houseNames[0]} (Cashback)
+            </div>
+          )}
           
           <div className="grid-2 mb-4">
             <div className="form-group">
@@ -836,40 +822,33 @@ export const CalculatorFreeProDirect = () => {
         <div className="house-grid">
           {entries.slice(0, numEntries - 1).map((entry, idx) => (
             <div key={idx} className="house-card">
-              <h3 
-                className="house-title cursor-pointer hover:opacity-80 transition-opacity select-none"
-                onClick={() => {
-                  if (editingName === idx + 1) {
-                    setEditingName(null);
-                  } else {
-                    setEditingName(idx + 1);
-                  }
-                }}
-                title="Clique para editar o nome"
-              >
-                {editingName === idx + 1 ? (
-                  <input
-                    type="text"
-                    value={houseNames[idx + 1]}
-                    onChange={(e) => {
-                      const newNames = [...houseNames];
-                      newNames[idx + 1] = e.target.value;
-                      setHouseNames(newNames);
-                    }}
-                    onBlur={() => setEditingName(null)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        setEditingName(null);
-                      }
-                    }}
-                    autoFocus
-                    className="bg-transparent border-b-2 border-[hsl(var(--shark-gradient-start))] outline-none w-full"
-                    style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
-                  />
-                ) : (
-                  houseNames[idx + 1]
-                )}
-              </h3>
+              {editingName === idx + 1 ? (
+                <input
+                  type="text"
+                  value={houseNames[idx + 1]}
+                  onChange={(e) => {
+                    const newNames = [...houseNames];
+                    newNames[idx + 1] = e.target.value;
+                    setHouseNames(newNames);
+                  }}
+                  onBlur={() => setEditingName(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingName(null);
+                    }
+                  }}
+                  autoFocus
+                  className="house-title bg-transparent border-b-2 border-[hsl(var(--shark-gradient-start))] outline-none w-full mb-4"
+                />
+              ) : (
+                <h3 
+                  className="house-title cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => setEditingName(idx + 1)}
+                  title="Clique para editar o nome"
+                >
+                  {houseNames[idx + 1]}
+                </h3>
+              )}
               
               <div className="grid-2 mb-4">
                 <div className="form-group">

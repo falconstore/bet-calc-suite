@@ -188,7 +188,8 @@ export class ArbiPro {
     if (!Number.isFinite(num)) return Utils.formatDecimal(num);
     
     const step = this.roundingValue;
-    const baseRounded = Math.round(num / step) * step;
+    // Arredondar para BAIXO para o múltiplo do step
+    const baseRounded = Math.floor(num / step) * step;
     
     const options = [
       Math.max(0, baseRounded - step),

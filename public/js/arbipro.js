@@ -188,8 +188,8 @@ export class ArbiPro {
     if (!Number.isFinite(num)) return Utils.formatDecimal(num);
     
     const step = this.roundingValue;
-    // Arredondar sempre para BAIXO para o múltiplo do step
-    const rounded = Math.floor(num / step) * step;
+    // Arredondamento padrão: até 0.49 para baixo, 0.50+ para cima
+    const rounded = Math.round(num / step) * step;
     
     return Utils.formatDecimal(rounded);
   }

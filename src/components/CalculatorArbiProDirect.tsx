@@ -106,10 +106,10 @@ export const CalculatorArbiProDirect = () => {
         const resp = parseFlex(h.responsibility) || 0;
         profits[idx] = stake * (1 - commission / 100) - (totalStake - resp);
       } else if (h.freebet) {
-        // Quando é freebet, usa a mesma fórmula de back mas com odd - 1
+        // Freebet: odd - 1, sem gastar a stake
         const effectiveOdd = odd - 1;
         const grossReturn = stake * effectiveOdd;
-        const grossProfit = grossReturn - stake;
+        const grossProfit = grossReturn; // Não subtrai stake porque é freebet
         const commissionAmount = grossProfit * (commission / 100);
         const netReturn = grossReturn - commissionAmount;
         profits[idx] = netReturn - totalStake;

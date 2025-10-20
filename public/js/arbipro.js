@@ -631,10 +631,11 @@ export class ArbiPro {
       const profitValue = Utils.formatBRL(profit);
       const responsibilityCell = hasLayBets ? 
         `<td>${h.lay ? '<strong>R$ ' + (h.responsibility || '0,00') + '</strong>' : '—'}</td>` : '';
+      const houseName = h.name || `Casa ${idx + 1}`;
       
       return `
         <tr>
-          <td><strong>Casa ${idx + 1}</strong></td>
+          <td><strong>${houseName}</strong></td>
           <td>${oddText}</td>
           ${oddFinalText}
           <td>${commissionText}</td>
@@ -672,6 +673,7 @@ export class ArbiPro {
       if (house.lay) h.l = 1;
       if (house.fixedStake) h.fs = 1;
       if (house.responsibility) h.re = String(house.responsibility);
+      if (house.name) h.n = house.name;
       
       // Só adicionar se tiver algum dado
       if (Object.keys(h).length > 0) {
@@ -718,6 +720,7 @@ export class ArbiPro {
           if (h.l) houseUpdate.lay = true;
           if (h.fs) houseUpdate.fixedStake = true;
           if (h.re !== undefined) houseUpdate.responsibility = String(h.re);
+          if (h.n !== undefined) houseUpdate.name = h.n;
           
           // Usar setHouse para garantir que finalOdd seja calculado corretamente
           this.setHouse(idx, houseUpdate);

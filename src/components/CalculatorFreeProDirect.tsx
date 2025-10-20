@@ -156,12 +156,12 @@ export const CalculatorFreeProDirect = () => {
       return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
     });
 
-    // Total investido (stake da freebet + coberturas)
-    const total = F + roundedStakes.reduce((acc, stake, idx) => {
+    // Total investido (apenas as coberturas, freebet é grátis)
+    const total = roundedStakes.reduce((acc, stake, idx) => {
       return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : stake);
     }, 0);
 
-    // Lucro cenário 1 (casa promo vence)
+    // Lucro cenário 1 (casa promo vence com freebet)
     const net1 = F * o1e - total;
 
     // Lucros nos outros cenários - exatamente como no original

@@ -91,12 +91,14 @@ export const CalculatorArbiProDirect = () => {
     let totalStake = 0;
     const profits = new Array(active.length).fill(0);
 
+    // Total investido: NÃO inclui stakes de freebet
     active.forEach(h => {
       const stake = parseFlex(h.stake) || 0;
       const resp = parseFlex(h.responsibility) || 0;
       if (!h.freebet) totalStake += h.lay ? resp : stake;
     });
 
+    // Calcula lucro para cada cenário
     active.forEach((h, idx) => {
       const stake = parseFlex(h.stake) || 0;
       const odd = h.finalOdd || 0;
@@ -106,14 +108,14 @@ export const CalculatorArbiProDirect = () => {
         const resp = parseFlex(h.responsibility) || 0;
         profits[idx] = stake * (1 - commission / 100) - (totalStake - resp);
       } else if (h.freebet) {
-        // Freebet: odd - 1, sem gastar a stake
+        // Freebet: odd - 1, retorno total é o lucro
         const effectiveOdd = odd - 1;
         const grossReturn = stake * effectiveOdd;
-        const grossProfit = grossReturn; // Não subtrai stake porque é freebet
-        const commissionAmount = grossProfit * (commission / 100);
+        const commissionAmount = grossReturn * (commission / 100);
         const netReturn = grossReturn - commissionAmount;
         profits[idx] = netReturn - totalStake;
       } else {
+        // Back normal
         const grossReturn = stake * odd;
         const grossProfit = grossReturn - stake;
         const commissionAmount = grossProfit * (commission / 100);

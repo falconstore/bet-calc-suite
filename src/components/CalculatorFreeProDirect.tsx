@@ -63,10 +63,7 @@ export const CalculatorFreeProDirect = () => {
     return parseFloat(str);
   };
 
-  const formatBRL = (val: number | undefined): string => {
-    if (val === undefined || val === null || !Number.isFinite(val)) {
-      return 'R$ 0,00';
-    }
+  const formatBRL = (val: number): string => {
     return val.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',

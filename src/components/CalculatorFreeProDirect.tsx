@@ -105,22 +105,31 @@ export const CalculatorFreeProDirect = () => {
       return;
     }
 
-    // Função effOdd igual ao original
-    const effOdd = (odd: number, comm: number) => {
+    // Para freebet: a odd efetiva diminui em 1 (ex: 3.90 vira 2.90)
+    const o1Adjusted = o1 - 1;
+    
+    // Validar odd ajustada
+    if (o1Adjusted <= 1) {
+      setResults([]);
+      setTotalStake(0);
+      setRoi(0);
+      return;
+    }
+
+    const cashbackAmount = F * (r / 100);
+
+    const effOdd = (o: number, comm: number) => {
       const cc = (Number.isFinite(comm) && comm > 0) ? comm / 100 : 0;
-      return 1 + (odd - 1) * (1 - cc);
+      return 1 + (o - 1) * (1 - cc);
     };
 
-    // Para freebet: odd efetiva diminui em 1 (ex: 6.00 vira 5.00)
-    const o1e = effOdd(o1, c1) - 1;
-    const rF = (r / 100) * F;
-    const A = F * o1e - rF;
-
-    const stakes: number[] = [];
-    const eBack: number[] = [];
+    const Oeff = effOdd(o1Adjusted, c1);
     const commFrac: number[] = [];
+    const eBack: number[] = [];
     const oddsOrig: number[] = [];
+    let stakes: number[] = [];
 
+    // Calcular eBack para todas as entradas
     validEntries.forEach((entry) => {
       const L = toNum(entry.odd);
       const comm = toNum(entry.commission);
@@ -130,54 +139,82 @@ export const CalculatorFreeProDirect = () => {
 
       if (entry.isLay) {
         const denom = L - 1;
-        if (!(denom > 0)) {
-          setResults([]);
-          setTotalStake(0);
-          setRoi(0);
-          return;
-        }
-        const eLay = 1 + (1 - cfrac) / denom;
-        const equivStake = A / eLay;
-        stakes.push(equivStake / denom);
-        eBack.push(eLay);
+        eBack.push(1 + (1 - cfrac) / denom);
       } else {
-        const e = effOdd(L, comm);
-        eBack.push(e);
-        stakes.push(A / e);
+        eBack.push(effOdd(L, comm));
       }
     });
 
-    // Arredondamento igual ao original
-    const roundStep = (v: number) => Math.round(v / rounding) * rounding;
-    const roundedStakes = stakes.map(roundStep).map(s => Math.max(s, 0.50));
+    // Calcular H para verificar se é possível nivelar
+    const H = eBack.reduce((a, e) => a + (1 / e), 0);
 
-    // Liabilities - exatamente como no original
-    const liabilities = roundedStakes.map((stake, idx) => {
-      return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
+    if (H >= 1) {
+      // Modo de cobertura
+      const baseLoss = F;
+      validEntries.forEach((entry, idx) => {
+        if (entry.isLay) {
+          stakes.push(baseLoss / (1 - commFrac[idx]));
+        } else {
+          const util = eBack[idx] - 1;
+          if (util <= 0) {
+            setResults([]);
+            setTotalStake(0);
+            setRoi(0);
+            return;
+          }
+          stakes.push(baseLoss / util);
+        }
+      });
+    } else {
+      // Modo nivelado
+      const P = F;
+      const C = cashbackAmount;
+      const N = -P * (1 - Oeff + H * Oeff) + H * C;
+      const S_total = P * Oeff - N;
+      const numer = N + S_total - C;
+      
+      validEntries.forEach((entry, idx) => {
+        if (entry.isLay) {
+          const desiredLiability = numer / eBack[idx];
+          const L = oddsOrig[idx];
+          stakes.push(desiredLiability / (L - 1));
+        } else {
+          stakes.push(numer / eBack[idx]);
+        }
+      });
+    }
+
+    // Arredondamento
+    const roundStep = (v: number) => Math.round(v / rounding) * rounding;
+    stakes = stakes.map(roundStep).map(v => Math.max(v, 0.50));
+
+    // Liabilities
+    const liabilities = stakes.map((s, idx) => {
+      return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * s : 0;
     });
 
-    // Total investido (apenas as coberturas, freebet é grátis)
-    const total = roundedStakes.reduce((acc, stake, idx) => {
-      return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : stake);
+    // Total investido (stake da freebet + coberturas)
+    const total = F + stakes.reduce((acc, s, idx) => {
+      return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * s : s);
     }, 0);
 
-    // Lucro cenário 1 (casa promo vence com freebet)
-    const net1 = F * o1e - total;
+    // Lucro se ganhar aposta principal (com freebet)
+    const net1 = F * Oeff - total;
 
-    // Lucros nos outros cenários - exatamente como no original
+    // Lucros nas coberturas
     const defs: number[] = [];
     const profits: number[] = [net1];
-    for (let win = 0; win < roundedStakes.length; win++) {
+    for (let win = 0; win < stakes.length; win++) {
       let deficit;
       if (validEntries[win].isLay) {
-        const ganhoLay = roundedStakes[win] * (1 - commFrac[win]);
+        const ganhoLay = stakes[win] * (1 - commFrac[win]);
         const liab = liabilities[win];
         deficit = ganhoLay - (total - liab);
       } else {
-        deficit = roundedStakes[win] * eBack[win] - total;
+        deficit = stakes[win] * eBack[win] - total;
       }
       defs.push(deficit);
-      profits.push(deficit + rF);
+      profits.push(deficit + cashbackAmount);
     }
 
     const lucroMedio = profits.reduce((a, b) => a + b, 0) / profits.length;
@@ -202,7 +239,7 @@ export const CalculatorFreeProDirect = () => {
         name: `${idx + 2} vence (${houseNames[idx + 1]})`,
         odd: entry.odd && entry.odd.trim() ? entry.odd.replace('.', ',') : oddsOrig[idx].toFixed(2).replace('.', ','),
         commission: (Number.isFinite(toNum(entry.commission)) ? toNum(entry.commission) : 0).toFixed(2),
-        stake: roundedStakes[idx].toFixed(2).replace('.', ',') + (entry.isLay ? ' (LAY)' : ''),
+        stake: stakes[idx].toFixed(2).replace('.', ',') + (entry.isLay ? ' (LAY)' : ''),
         deficit: formatBRL(defs[idx]),
         liability: hasLay ? (entry.isLay ? formatBRL(liabilities[idx]) : '-') : undefined,
         profit: formatBRL(profits[idx + 1])

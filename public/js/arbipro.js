@@ -23,7 +23,8 @@ export class ArbiPro {
       freebet: false,
       fixedStake: index === 0,
       lay: false,
-      responsibility: ""
+      responsibility: "",
+      name: ""
     }));
 
     this.results = { profits: [], totalStake: 0, roi: 0 };
@@ -292,9 +293,10 @@ export class ArbiPro {
 
   cardHTML(idx, h) {
     const oddDisplay = (h.finalOdd || 0).toFixed(2).replace('.', ',');
+    const houseName = h.name || `Casa ${idx + 1}`;
     return `
       <div id="card-${idx}" class="house-card">
-        <h3 class="house-title">Casa ${idx + 1}</h3>
+        <h3 class="house-title" contenteditable="true" data-idx="${idx}" data-action="editHouseName" spellcheck="false">${houseName}</h3>
         <div class="grid-2" style="margin-bottom: 0.75rem;">
           <div class="form-group">
             <label class="form-label" for="odd-${idx}">Odd</label>
@@ -434,6 +436,9 @@ export class ArbiPro {
     if (!action || idx < 0) return;
 
     switch (action) {
+      case "editHouseName":
+        this.setHouse(idx, { name: t.textContent.trim() });
+        break;
       case "odd":
         // Quando a odd é alterada, limpar o override de stake para recalcular automaticamente
         if (this.manualOverrides[idx]) {

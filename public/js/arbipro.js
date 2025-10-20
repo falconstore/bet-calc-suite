@@ -422,6 +422,17 @@ export class ArbiPro {
     container.addEventListener("input", (e) => this.handleInput(e));
     container.addEventListener("change", (e) => this.handleChange(e));
     container.addEventListener("click", (e) => this.handleClick(e));
+    container.addEventListener("keydown", (e) => this.handleKeyDown(e));
+  }
+
+  handleKeyDown(e) {
+    const t = e.target;
+    const action = t.getAttribute("data-action");
+    
+    if (action === "editHouseName" && e.key === "Enter") {
+      e.preventDefault();
+      t.blur();
+    }
   }
 
   handleInput(e) {

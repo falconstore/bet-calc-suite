@@ -82,11 +82,10 @@ export const CalculatorFreeProDirect = () => {
     const F = toNum(freebetValue);
     const r = toNum(extractionRate);
 
-    // Validação igual ao original - c1 pode ser NaN (vazio)
+    // Validação - freebet não precisa de stake qualificatório obrigatório
     if (!Number.isFinite(o1) || o1 <= 1 ||
         !Number.isFinite(F) || F < 0 ||
-        !Number.isFinite(r) || r < 0 || r > 100 ||
-        !Number.isFinite(s1) || s1 <= 0) {
+        !Number.isFinite(r) || r < 0 || r > 100) {
       setResults([]);
       setTotalStake(0);
       setRoi(0);
@@ -114,7 +113,8 @@ export const CalculatorFreeProDirect = () => {
 
     const o1e = effOdd(o1, c1);
     const rF = (r / 100) * F;
-    const A = s1 * o1e - rF;
+    // Para freebet pura: A é o retorno líquido da freebet (sem contar o stake, pois é grátis)
+    const A = F * (o1e - 1) - rF;
 
     const stakes: number[] = [];
     const eBack: number[] = [];
@@ -156,13 +156,14 @@ export const CalculatorFreeProDirect = () => {
       return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
     });
 
-    // Total - exatamente como no original
-    const total = s1 + roundedStakes.reduce((acc, stake, idx) => {
+    // Total investido (apenas as coberturas, freebet não conta como investimento)
+    const total = roundedStakes.reduce((acc, stake, idx) => {
       return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : stake);
     }, 0);
 
-    // Lucro cenário 1 (casa promo vence)
-    const net1 = s1 * o1e - total;
+    // Lucro cenário 1 (casa promo vence com freebet)
+    // Ganho da freebet menos o total investido nas coberturas
+    const net1 = F * (o1e - 1) - total;
 
     // Lucros nos outros cenários - exatamente como no original
     const defs: number[] = [];
@@ -193,7 +194,7 @@ export const CalculatorFreeProDirect = () => {
         name: `1 vence (${houseNames[0]})`,
         odd: houseOdd && houseOdd.trim() ? houseOdd.replace('.', ',') : o1.toFixed(2).replace('.', ','),
         commission: (Number.isFinite(c1) ? c1 : 0).toFixed(2),
-        stake: s1.toFixed(2).replace('.', ','),
+        stake: F.toFixed(2).replace('.', ',') + ' (FREEBET)',
         deficit: '-',
         liability: hasLay ? '-' : undefined,
         profit: formatBRL(profits[0])

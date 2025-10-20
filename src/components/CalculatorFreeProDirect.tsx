@@ -82,9 +82,9 @@ export const CalculatorFreeProDirect = () => {
     const F = toNum(freebetValue);
     const r = toNum(extractionRate);
 
-    // Validação - freebet não precisa de stake qualificatório obrigatório
+    // Validação
     if (!Number.isFinite(o1) || o1 <= 1 ||
-        !Number.isFinite(F) || F < 0 ||
+        !Number.isFinite(F) || F <= 0 ||
         !Number.isFinite(r) || r < 0 || r > 100) {
       setResults([]);
       setTotalStake(0);
@@ -111,10 +111,10 @@ export const CalculatorFreeProDirect = () => {
       return 1 + (odd - 1) * (1 - cc);
     };
 
-    const o1e = effOdd(o1, c1);
+    // Para freebet: odd efetiva diminui em 1 (ex: 6.00 vira 5.00)
+    const o1e = effOdd(o1, c1) - 1;
     const rF = (r / 100) * F;
-    // Para freebet pura: A é o retorno líquido da freebet (sem contar o stake, pois é grátis)
-    const A = F * (o1e - 1) - rF;
+    const A = F * o1e - rF;
 
     const stakes: number[] = [];
     const eBack: number[] = [];
@@ -156,14 +156,13 @@ export const CalculatorFreeProDirect = () => {
       return validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : 0;
     });
 
-    // Total investido (apenas as coberturas, freebet não conta como investimento)
-    const total = roundedStakes.reduce((acc, stake, idx) => {
+    // Total investido (stake da freebet + coberturas)
+    const total = F + roundedStakes.reduce((acc, stake, idx) => {
       return acc + (validEntries[idx].isLay ? (oddsOrig[idx] - 1) * stake : stake);
     }, 0);
 
-    // Lucro cenário 1 (casa promo vence com freebet)
-    // Ganho da freebet menos o total investido nas coberturas
-    const net1 = F * (o1e - 1) - total;
+    // Lucro cenário 1 (casa promo vence)
+    const net1 = F * o1e - total;
 
     // Lucros nos outros cenários - exatamente como no original
     const defs: number[] = [];

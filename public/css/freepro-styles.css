@@ -64,6 +64,34 @@
   overflow: hidden !important;
 }
 
+/* Marca d'água para card de resultados */
+.card-with-watermark {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-with-watermark::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  background-image: url('/images/shark-logo-watermark.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.card-with-watermark > * {
+  position: relative;
+  z-index: 1;
+}
+
 .card::before {
   content: '' !important;
   position: absolute !important;
